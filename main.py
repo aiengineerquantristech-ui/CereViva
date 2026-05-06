@@ -3,6 +3,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi import Request
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from openai import base_url
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
@@ -69,9 +70,10 @@ def create_assessment(data: AssessmentCreate, db: Session = Depends(get_db)):
     db.add(assessment)
     db.commit()
     db.refresh(assessment)
+    base_url = os.environ.get("BASE_URL", "http://localhost:3000")
     return {
         "token": token,
-        "link": f"http://localhost:3000/assess/{token}",
+        "link": f"{base_url}/assess/{token}",
         "message": "Assessment created successfully",
     }
 
