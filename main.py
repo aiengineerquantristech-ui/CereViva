@@ -170,3 +170,58 @@ def get_report(token: str, db: Session = Depends(get_db)):
 @app.get("/assess/{token}")
 def assessment_page(token: str, request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "token": token})
+
+# ── Admin / Debug Routes ──────────────────────────────────────
+
+@app.get("/admin/assessments")
+def get_all_assessments(db: Session = Depends(get_db)):
+    assessments = db.query(Assessment).all()
+    return {
+        "count": len(assessments),
+        "assessments": [
+            {
+                "id": a.id,
+                "token": a.token,
+                "client_name": a.client_name,
+                "client_email": a.client_email,
+                "org_name": a.org_name,
+                "status": a.status,
+                "created_at": a.created_at,
+            }
+            for a in assessments
+        ],
+    }
+
+@app.get("/admin/reports")
+def get_all_reports(db: Session = Depends(get_db)):
+    reports = db.query(Report).all()
+    return {
+        "count": len(reports),
+        "reports": [
+            {
+                "id": r.id,
+                "assessment_id": r.assessment_id,
+                "overall_score": r.overall_score,
+                "maturity_stage": r.maturity_stage,
+                "risk_band": r.risk_band,
+            }
+            for r in reports
+        ],
+    }
+
+@app.get("/admin/responses")
+def get_all_responses(db: Session = Depends(get_db)):
+    responses = db.query(Response).all()
+    return {
+        "count": len(responses),
+        "responses": [
+            {
+                "id": r.id,
+                "assessment_id": r.assessment_id,
+                "question_id": r.question_id,
+                "dimension": r.dimension,
+                "answer": r.answer,
+            }
+            for r in responses
+        ],
+    }
