@@ -1,8 +1,17 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
 
-DATABASE_URL = "postgresql://postgres:admin123@localhost:5434/cereviva_db"
+load_dotenv()
+
+# ✅ Read from environment variable
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# ✅ Fix for Render: postgres:// → postgresql://
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 engine = create_engine(DATABASE_URL)
 
