@@ -3,7 +3,6 @@ from fastapi.templating import Jinja2Templates
 from fastapi import Request
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from openai import base_url
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
@@ -14,7 +13,9 @@ from questions import QUESTIONS, DIMENSIONS, OPEN_TEXT_QUESTIONS, DEMOGRAPHICS, 
 from scoring import calculate_scores
 import uuid
 
-Base.metadata.create_all(bind=engine, checkfirst=True)
+import os
+
+
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
