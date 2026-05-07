@@ -174,7 +174,11 @@ def get_report(token: str, db: Session = Depends(get_db)):
 
 @app.get("/assess/{token}")
 def assessment_page(token: str, request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "token": token})
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={"token": token}
+    )
 
 # ── Admin / Debug Routes ──────────────────────────────────────
 
