@@ -1,17 +1,14 @@
-
-import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
 
-# Get DATABASE_URL from environment
-DATABASE_URL = os.environ.get("postgresql://neondb_owner:npg_jsRW4LlVTkF7@ep-lucky-unit-amf04e11-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require")
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-# Raise clear error if missing
 if not DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable is not set")
+    DATABASE_URL = "postgresql://postgres:admin123@localhost:5434/cereviva_db"
 
-# Fix postgres:// → postgresql:// for compatibility
+# Railway uses postgres:// but SQLAlchemy needs postgresql://
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
