@@ -397,7 +397,7 @@
     let orgName = "Your Organisation";
 
     async function loadQuestions() {
-        const res = await fetch("http://127.0.0.1:8000/questions");
+        const res = await fetch("/questions");
         const data = await res.json();
         questions = data.questions;
         openTextQuestions = data.open_text_questions;
@@ -526,7 +526,7 @@
         btn.disabled = true;
         btn.textContent = "Submitting...";
 
-        const res = await fetch("http://127.0.0.1:8000/assessment/submit", {
+        const res = await fetch("/assessment/submit", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
