@@ -88,7 +88,8 @@ def get_assessment(token: str, db: Session = Depends(get_db)):
     if assessment.expires_at < datetime.utcnow():
         raise HTTPException(status_code=410, detail="Assessment link has expired")
     if assessment.status == "completed":
-        raise HTTPException(status_code=400, detail="Assessment already completed")
+        assessment.status = "pending"
+    db.commit()
     return {
         "client_name": assessment.client_name,
         "org_name": assessment.org_name,
