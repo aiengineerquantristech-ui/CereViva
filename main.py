@@ -12,7 +12,10 @@ from models import Assessment, Response, Report
 from questions import QUESTIONS, DIMENSIONS, OPEN_TEXT_QUESTIONS, DEMOGRAPHICS, ANSWER_LABELS
 from scoring import calculate_scores
 import uuid
-
+from auth import verify_password, create_access_token, verify_token, PHOEBE_USERNAME, PHOEBE_PASSWORD_HASH
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Security
+security = HTTPBearer()
 import os
 
 
@@ -238,3 +241,56 @@ def get_all_responses(db: Session = Depends(get_db)):
             for r in responses
         ],
     }
+
+from auth import verify_password, create_access_token, verify_token, PHOEBE_USERNAME, PHOEBE_PASSWORD_HASH
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Security
+
+security = HTTPBearer()
+
+class LoginData(BaseModel):
+    username: str
+    password: str
+
+@app.get("/login")
+def login_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="login.html",
+        context={}
+    )
+
+@app.post("/auth/login")
+def login(data: LoginData):
+    if data.username != PHOEBE_USERNAME:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    if not verify_password(data.password, PHOEBE_PASSWORD_HASH):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    token = create_access_token({"sub": data.username})
+    return {"token": token}
+
+@app.get("/dashboard")
+def dashboard_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="dashboard.html",
+        context={}
+    )
+
+@app.get("/dashboard/assessments")
+def get_assessments(credentials: HTTPAuthorizationCredentials = Security(security), db: Session = Depends(get_db)):
+    if not verify_token(credentials.credentials):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    assessments = db.query(Assessment).order_by(Assessment.created_at.desc()).all()
+    result = []
+    for a in assessments:
+        result.append({
+            "client_name": a.client_name,
+            "client_email": a.client_email,
+            "org_name": a.org_name,
+            "status": a.status,
+            "created_at": a.created_at,
+            "overall_score": a.report.overall_score if a.report else None,
+            "maturity_stage": a.report.maturity_stage if a.report else None,
+        })
+    return {"assessments": result}

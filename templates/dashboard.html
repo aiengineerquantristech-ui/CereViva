@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CereViva — Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fc;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #2B4C8F;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .navbar-subtitle {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-logout:hover { background: rgba(255,255,255,0.25); }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #1a1a1a;
+        }
+
+        .btn-primary {
+            background: #2B4C8F;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover { background: #1a3a6b; }
+
+        /* Create link modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 480px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        .modal h3 {
+            font-size: 20px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .modal p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        input, select {
+            width: 100%;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 14px;
+            color: #333;
+            outline: none;
+        }
+
+        input:focus, select:focus { border-color: #2B4C8F; }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #f0f0f0;
+            color: #333;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .btn-create {
+            flex: 2;
+            background: #2B4C8F;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Link result */
+        .link-result {
+            display: none;
+            background: #f0f4ff;
+            border: 1px solid #c0d0ff;
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .link-result p {
+            font-size: 13px;
+            color: #2B4C8F;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .link-box {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .link-text {
+            flex: 1;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #333;
+            word-break: break-all;
+        }
+
+        .btn-copy {
+            background: #2B4C8F;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2B4C8F;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Table */
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fc;
+        }
+
+        th {
+            text-align: left;
+            padding: 14px 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        td {
+            padding: 16px 20px;
+            font-size: 14px;
+            color: #333;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8f9fc; }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: #fff8e7;
+            color: #b37400;
+        }
+
+        .badge-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .score-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #f0f4ff;
+            color: #2B4C8F;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state p {
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state span {
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div>
+        <div class="navbar-brand">CereViva</div>
+        <div class="navbar-subtitle">NeuroSafety™ Consultant Dashboard</div>
+    </div>
+    <button class="btn-logout" onclick="logout()">Sign Out</button>
+</div>
+
+<div class="container">
+
+    <div class="top-row">
+        <h2>Assessments</h2>
+        <button class="btn-primary" onclick="openModal()">+ New Assessment Link</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-number" id="stat-total">0</div>
+            <div class="stat-label">Total Assessments</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="stat-completed">0</div>
+            <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="stat-pending">0</div>
+            <div class="stat-label">Pending</div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Organisation</th>
+                    <th>Status</th>
+                    <th>Score</th>
+                    <th>Maturity Stage</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="assessments-table">
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <p>Loading assessments...</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- Create Link Modal -->
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <h3>Create Assessment Link</h3>
+        <p>Enter the client details to generate a unique assessment link.</p>
+
+        <div class="field">
+            <label>Client Name</label>
+            <input type="text" id="client-name" placeholder="e.g. John Smith" />
+        </div>
+
+        <div class="field">
+            <label>Client Email</label>
+            <input type="email" id="client-email" placeholder="e.g. john@company.com" />
+        </div>
+
+        <div class="field">
+            <label>Organisation Name</label>
+            <input type="text" id="org-name" placeholder="e.g. Acme Corp" />
+        </div>
+
+        <div class="field">
+            <label>Industry</label>
+            <select id="industry">
+                <option value="">Select industry...</option>
+                <option>Construction</option>
+                <option>Mining</option>
+                <option>Manufacturing</option>
+                <option>Healthcare</option>
+                <option>Transport & Logistics</option>
+                <option>Oil & Gas</option>
+                <option>Agriculture</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <div class="link-result" id="link-result">
+            <p>✓ Assessment link created! Share this with your client:</p>
+            <div class="link-box">
+                <div class="link-text" id="generated-link"></div>
+                <button class="btn-copy" onclick="copyLink()">Copy</button>
+            </div>
+        </div>
+
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-create" id="btn-create" onclick="createLink()">Generate Link →</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        window.location.href = "/login";
+    }
+
+    async function loadAssessments() {
+        const res = await fetch("/dashboard/assessments", {
+            headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (res.status === 401) {
+            window.location.href = "/login";
+            return;
+        }
+
+        const data = await res.json();
+        const tbody = document.getElementById("assessments-table");
+        const assessments = data.assessments;
+
+        // Update stats
+        document.getElementById("stat-total").textContent = assessments.length;
+        document.getElementById("stat-completed").textContent = assessments.filter(a => a.status === "completed").length;
+        document.getElementById("stat-pending").textContent = assessments.filter(a => a.status === "pending").length;
+
+        if (assessments.length === 0) {
+            tbody.innerHTML = `
+                <tr><td colspan="6">
+                    <div class="empty-state">
+                        <p>No assessments yet</p>
+                        <span>Click "New Assessment Link" to get started</span>
+                    </div>
+                </td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = assessments.map(a => `
+            <tr>
+                <td><strong>${a.client_name}</strong><br><span style="font-size:12px;color:#999">${a.client_email}</span></td>
+                <td>${a.org_name}</td>
+                <td><span class="badge badge-${a.status}">${a.status}</span></td>
+                <td>${a.overall_score ? '<span class="score-pill">' + a.overall_score + ' / 5</span>' : '—'}</td>
+                <td>${a.maturity_stage || '—'}</td>
+                <td>${new Date(a.created_at).toLocaleDateString()}</td>
+            </tr>
+        `).join("");
+    }
+
+    function openModal() {
+        document.getElementById("modal").classList.add("active");
+        document.getElementById("link-result").style.display = "none";
+        document.getElementById("btn-create").style.display = "block";
+        document.getElementById("client-name").value = "";
+        document.getElementById("client-email").value = "";
+        document.getElementById("org-name").value = "";
+        document.getElementById("industry").value = "";
+    }
+
+    function closeModal() {
+        document.getElementById("modal").classList.remove("active");
+        loadAssessments();
+    }
+
+    async function createLink() {
+        const clientName = document.getElementById("client-name").value.trim();
+        const clientEmail = document.getElementById("client-email").value.trim();
+        const orgName = document.getElementById("org-name").value.trim();
+        const industry = document.getElementById("industry").value;
+
+        if (!clientName || !clientEmail || !orgName) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+
+        const btn = document.getElementById("btn-create");
+        btn.textContent = "Generating...";
+        btn.disabled = true;
+
+        const res = await fetch("/assessment/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                client_name: clientName,
+                client_email: clientEmail,
+                org_name: orgName,
+                industry: industry
+            })
+        });
+
+        const data = await res.json();
+        const link = window.location.origin + "/assess/" + data.token;
+        document.getElementById("generated-link").textContent = link;
+        document.getElementById("link-result").style.display = "block";
+        btn.style.display = "none";
+    }
+
+    function copyLink() {
+        const link = document.getElementById("generated-link").textContent;
+        navigator.clipboard.writeText(link);
+        document.querySelector(".btn-copy").textContent = "Copied!";
+        setTimeout(() => document.querySelector(".btn-copy").textContent = "Copy", 2000);
+    }
+
+    function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+    }
+
+    loadAssessments();
+</script>
+</body>
+</html>
