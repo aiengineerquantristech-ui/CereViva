@@ -1,18 +1,16 @@
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import hashlib
 
 SECRET_KEY = "cereviva-secret-key-2026"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_HOURS = 24
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 PHOEBE_USERNAME = "phoebe"
-PHOEBE_PASSWORD_HASH = pwd_context.hash("cereviva2026")
+PHOEBE_PASSWORD = "cereviva2026"
 
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+def verify_password(plain_password, stored_password):
+    return plain_password == stored_password
 
 def create_access_token(data: dict):
     to_encode = data.copy()

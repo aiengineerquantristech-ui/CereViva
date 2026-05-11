@@ -12,7 +12,7 @@ from models import Assessment, Response, Report
 from questions import QUESTIONS, DIMENSIONS, OPEN_TEXT_QUESTIONS, DEMOGRAPHICS, ANSWER_LABELS
 from scoring import calculate_scores
 import uuid
-from auth import verify_password, create_access_token, verify_token, PHOEBE_USERNAME, PHOEBE_PASSWORD_HASH
+from auth import verify_password, create_access_token, verify_token, PHOEBE_USERNAME, PHOEBE_PASSWORD
 
 import os
 
@@ -268,7 +268,7 @@ def login_page(request: Request):
 def login(data: LoginData):
     if data.username != PHOEBE_USERNAME:
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    if not verify_password(data.password, PHOEBE_PASSWORD_HASH):
+    if not verify_password(data.password, PHOEBE_PASSWORD):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_access_token({"sub": data.username})
     return {"token": token}
