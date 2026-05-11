@@ -13,9 +13,7 @@ from questions import QUESTIONS, DIMENSIONS, OPEN_TEXT_QUESTIONS, DEMOGRAPHICS, 
 from scoring import calculate_scores
 import uuid
 from auth import verify_password, create_access_token, verify_token, PHOEBE_USERNAME, PHOEBE_PASSWORD_HASH
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi import Security
-security = HTTPBearer()
+
 import os
 
 
@@ -241,6 +239,12 @@ def get_all_responses(db: Session = Depends(get_db)):
             for r in responses
         ],
     }
+
+from auth import verify_password, create_access_token, verify_token, PHOEBE_USERNAME, PHOEBE_PASSWORD_HASH
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Security
+
+security = HTTPBearer()
 
 from auth import verify_password, create_access_token, verify_token, PHOEBE_USERNAME, PHOEBE_PASSWORD_HASH
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
