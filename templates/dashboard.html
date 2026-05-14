@@ -389,6 +389,27 @@
         btn.disabled = false;
     }
 }
+function copyToClipboard(text) {
+    // Try the modern API first
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+    } else {
+        // Fallback for non-HTTPS or if modern API is blocked
+        let textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed"; // prevent scrolling to bottom
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            alert("Link copied to clipboard!");
+        } catch (err) {
+            console.error('Fallback: Oops, unable to copy', err);
+        }
+        document.body.removeChild(textArea);
+    }
+}
 
     // ── Edit Assessment ───────────────────────────────────────
     function openEditModal(id, name, email, org, industry) {
