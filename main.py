@@ -1,8 +1,9 @@
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi import Request
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import Request, FastAPI, Depends, HTTPException, Security
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
@@ -11,28 +12,15 @@ from database import engine, get_db, Base
 from models import Assessment, Response, Report
 from questions import QUESTIONS, DIMENSIONS, OPEN_TEXT_QUESTIONS, DEMOGRAPHICS, ANSWER_LABELS
 from scoring import calculate_scores
-import uuid
 from auth import verify_password, create_access_token, verify_token, PHOEBE_USERNAME, PHOEBE_PASSWORD
 from gemini_report import generate_report
 from email_service import send_report_to_all
+import uuid
 import os
 
-from functools import wraps
-from fastapi.responses import RedirectResponse
-
-
+# ── App Setup ─────────────────────────────────────────────────
 app = FastAPI()
 
-# ── WordPress Token Auth ──────────────────────────────────────
-WP_SECRET_TOKEN = os.environ.get('DASHBOARD_SECRET_TOKEN')
-
-def verify_wp_token(request: Request):
-    token = request.query_params.get('token')
-    if token and token == WP_SECRET_TOKEN:
-        return True
-    return False
-
-from database import Base, engine
 Base.metadata.create_all(bind=engine)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -46,7 +34,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Pydantic models ───────────────────────────────────────────
+# ── WordPress Token Auth ──────────────────────────────────────
+WP_SECRET_TOKEN = os.environ.get('DASHBOARD_SECRET_TOKEN')
+
+def verify_wp_token(request: Request):
+    token = request.query_params.get('token')
+    if token and token == WP_SECRET_TOKEN:
+        return True
+    return False
+
+# ── Security ──────────────────────────────────────────────────
+security = HTTPBearer()
+
+# ── Pydantic Models ───────────────────────────────────────────
 class AssessmentCreate(BaseModel):
     client_name: str
     client_email: str
@@ -59,7 +59,11 @@ class SubmitAssessment(BaseModel):
     answers: dict
     open_text: dict
 
-# ── Routes ───────────────────────────────────────────────────
+class LoginData(BaseModel):
+    username: str
+    password: str
+
+# ── Routes ────────────────────────────────────────────────────
 
 @app.get("/")
 def root():
@@ -112,21 +116,21 @@ def get_assessment(token: str, db: Session = Depends(get_db)):
         "status": assessment.status,
     }
 
-@app.post("/dashboard/report/{assessment_id}")
+@app.post("/assessment/submit")
 def submit_assessment(data: SubmitAssessment, db: Session = Depends(get_db)):
     assessment = db.query(Assessment).filter(Assessment.token == data.token).first()
     if not assessment:
-    # For testing - create a temporary assessment if token not found
+        # For testing - create a temporary assessment if token not found
         assessment = Assessment(
-        token=data.token,
-        client_name="Test Client",
-        client_email="test@test.com",
-        org_name="Test Organisation",
-        expires_at=datetime.utcnow() + timedelta(days=30),
-    )
-    db.add(assessment)
-    db.commit()
-    db.refresh(assessment)
+            token=data.token,
+            client_name="Test Client",
+            client_email="test@test.com",
+            org_name="Test Organisation",
+            expires_at=datetime.utcnow() + timedelta(days=30),
+        )
+        db.add(assessment)
+        db.commit()
+        db.refresh(assessment)
 
     # Save responses
     for q in QUESTIONS:
@@ -152,19 +156,52 @@ def submit_assessment(data: SubmitAssessment, db: Session = Depends(get_db)):
     # Run scoring engine
     result = calculate_scores(responses)
 
-    # Save report
+    # ── Generate Gemini AI Report ─────────────────────────────
+    ai_narrative = ""
+    try:
+        ai_narrative = generate_report(
+            client_name=assessment.client_name,
+            org_name=assessment.org_name,
+            industry=assessment.industry or "Not specified",
+            overall_score=result["overall_score"],
+            maturity_stage=result["maturity_stage"],
+            risk_band=result["risk_band"],
+            dimension_scores=result["dimension_scores"],
+            top_risks=result["top_risks"],
+        )
+        print("✅ Gemini report generated successfully")
+    except Exception as e:
+        print(f"❌ Gemini report generation failed: {e}")
+        ai_narrative = "Report generation failed. Please contact support."
+
+    # Save report with AI narrative
     report = Report(
         assessment_id=assessment.id,
         overall_score=result["overall_score"],
         maturity_stage=result["maturity_stage"],
         risk_band=result["risk_band"],
-        narrative="",
+        narrative=ai_narrative,
     )
     db.add(report)
 
     # Mark assessment as completed
     assessment.status = "completed"
     db.commit()
+
+    # ── Send Emails ───────────────────────────────────────────
+    try:
+        send_report_to_all(
+            client_name=assessment.client_name,
+            client_email=assessment.client_email,
+            org_name=assessment.org_name,
+            overall_score=result["overall_score"],
+            maturity_stage=result["maturity_stage"],
+            risk_band=result["risk_band"],
+            report_text=ai_narrative,
+        )
+        print("✅ Emails sent successfully")
+    except Exception as e:
+        print(f"❌ Email sending failed: {e}")
 
     return {
         "message": "Assessment submitted successfully",
@@ -252,16 +289,7 @@ def get_all_responses(db: Session = Depends(get_db)):
         ],
     }
 
-
-
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi import Security
-
-security = HTTPBearer()
-
-class LoginData(BaseModel):
-    username: str
-    password: str
+# ── Auth Routes ───────────────────────────────────────────────
 
 @app.get("/login")
 def login_page(request: Request):
@@ -280,18 +308,17 @@ def login(data: LoginData):
     token = create_access_token({"sub": data.username})
     return {"token": token}
 
+# ── Dashboard Routes ──────────────────────────────────────────
+
 @app.get("/dashboard")
 def dashboard_page(request: Request):
     wp_access = verify_wp_token(request)
-    
     if not wp_access:
-        # No valid WP token → redirect to login page
         return RedirectResponse(url="/login")
-    
     return templates.TemplateResponse(
         request=request,
         name="dashboard.html",
-        context={"skip_auth": True}  # 👈 tells template to skip login check
+        context={"skip_auth": True}
     )
 
 @app.get("/dashboard/assessments")
@@ -305,11 +332,12 @@ def get_assessments(
 
     if not wp_access and not jwt_access:
         raise HTTPException(status_code=401, detail="Unauthorized")
+
     assessments = db.query(Assessment).order_by(Assessment.created_at.desc()).all()
     result = []
     for a in assessments:
         result.append({
-            "assessment_id": a.id,          # 👈 newly added
+            "assessment_id": a.id,
             "client_name": a.client_name,
             "client_email": a.client_email,
             "org_name": a.org_name,
@@ -320,3 +348,31 @@ def get_assessments(
         })
     return {"assessments": result}
 
+@app.get("/dashboard/report/{assessment_id}")
+def get_report_narrative(
+    assessment_id: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    credentials: HTTPAuthorizationCredentials = Security(HTTPBearer(auto_error=False))
+):
+    wp_access = verify_wp_token(request)
+    jwt_access = credentials and verify_token(credentials.credentials)
+
+    if not wp_access and not jwt_access:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    assessment = db.query(Assessment).filter(Assessment.id == assessment_id).first()
+    if not assessment:
+        raise HTTPException(status_code=404, detail="Assessment not found")
+    if not assessment.report:
+        raise HTTPException(status_code=404, detail="Report not ready yet")
+
+    return {
+        "client_name": assessment.client_name,
+        "org_name": assessment.org_name,
+        "overall_score": assessment.report.overall_score,
+        "maturity_stage": assessment.report.maturity_stage,
+        "risk_band": assessment.report.risk_band,
+        "narrative": assessment.report.narrative,
+        "created_at": assessment.report.created_at,
+    }
