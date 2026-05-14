@@ -368,7 +368,7 @@
                 <tr>
                     <td colspan="6">
                         <div class="empty-state">
-                            <p>Loading assessments...</p>
+                            <p>No assessments found.</p>
                         </div>
                     </td>
                 </tr>
@@ -459,12 +459,13 @@ async function loadAssessments() {
         document.getElementById("stat-pending").textContent = assessments.filter(a => a.status === "pending").length;
 
         if (assessments.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:#888;">No assessments yet.</td></tr>';
-        } else {
-            assessments.forEach(a => {
-                // your existing row rendering code
-            });
-
+            tbody.innerHTML = `
+                <tr><td colspan="6">
+                    <div class="empty-state">
+                        <p>No assessments yet</p>
+                        <span>Click "New Assessment Link" to get started</span>
+                    </div>
+                </td></tr>`;
             return;
         }
 
