@@ -364,15 +364,15 @@
                     <th>Date</th>
                 </tr>
             </thead>
-            <tbody id="assessments-table">
-                <tr>
-                    <td colspan="6">
-                        <div class="empty-state">
-                            <p>No assessments found.</p>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
+            <<tbody id="assessments-table">
+    <tr>
+        <td colspan="6">
+            <div class="empty-state">
+                <p>Loading...</p>
+            </div>
+        </td>
+    </tr>
+</tbody>
         </table>
     </div>
 
@@ -512,11 +512,10 @@ async function loadAssessments() {
         btn.disabled = true;
 
         const res = await fetch("/assessment/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + token
-            },
+    method: "POST",
+    headers: skipAuth
+        ? { "Content-Type": "application/json" }
+        : { "Content-Type": "application/json", "Authorization": "Bearer " + token },
             body: JSON.stringify({
                 client_name: clientName,
                 client_email: clientEmail,
@@ -533,11 +532,24 @@ async function loadAssessments() {
     }
 
     function copyLink() {
-        const link = document.getElementById("generated-link").textContent;
-        navigator.clipboard.writeText(link);
+    const link = document.getElementById("generated-link").textContent;
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(link).then(() => {
+            document.querySelector(".btn-copy").textContent = "Copied!";
+            setTimeout(() => document.querySelector(".btn-copy").textContent = "Copy", 2000);
+        });
+    } else {
+        // Fallback for http or older browsers
+        const el = document.createElement("textarea");
+        el.value = link;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand("copy");
+        document.body.removeChild(el);
         document.querySelector(".btn-copy").textContent = "Copied!";
         setTimeout(() => document.querySelector(".btn-copy").textContent = "Copy", 2000);
     }
+}
 
     function logout() {
         localStorage.removeItem("token");
