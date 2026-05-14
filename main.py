@@ -320,3 +320,12 @@ def get_assessments(
         })
     return {"assessments": result}
 
+@app.get("/debug-token")
+def debug_token(request: Request):
+    incoming = request.query_params.get('token')
+    stored = os.environ.get('DASHBOARD_SECRET_TOKEN')
+    return {
+        "incoming": incoming,
+        "stored": stored,  # we'll see actual value
+        "match": incoming == stored
+    }
