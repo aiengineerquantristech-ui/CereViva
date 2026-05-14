@@ -13,7 +13,8 @@ from questions import QUESTIONS, DIMENSIONS, OPEN_TEXT_QUESTIONS, DEMOGRAPHICS, 
 from scoring import calculate_scores
 import uuid
 from auth import verify_password, create_access_token, verify_token, PHOEBE_USERNAME, PHOEBE_PASSWORD
-
+from gemini_report import generate_report
+from email_service import send_report_to_all
 import os
 
 from functools import wraps
@@ -111,7 +112,7 @@ def get_assessment(token: str, db: Session = Depends(get_db)):
         "status": assessment.status,
     }
 
-@app.post("/assessment/submit")
+@app.post("/dashboard/report/{assessment_id}")
 def submit_assessment(data: SubmitAssessment, db: Session = Depends(get_db)):
     assessment = db.query(Assessment).filter(Assessment.token == data.token).first()
     if not assessment:
@@ -299,17 +300,16 @@ def get_assessments(
     db: Session = Depends(get_db),
     credentials: HTTPAuthorizationCredentials = Security(HTTPBearer(auto_error=False))
 ):
-    # Allow access via WordPress secret token OR JWT
     wp_access = verify_wp_token(request)
     jwt_access = credentials and verify_token(credentials.credentials)
-    
+
     if not wp_access and not jwt_access:
         raise HTTPException(status_code=401, detail="Unauthorized")
-    
     assessments = db.query(Assessment).order_by(Assessment.created_at.desc()).all()
     result = []
     for a in assessments:
         result.append({
+            "assessment_id": a.id,          # 👈 newly added
             "client_name": a.client_name,
             "client_email": a.client_email,
             "org_name": a.org_name,

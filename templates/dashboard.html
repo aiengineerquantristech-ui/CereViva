@@ -6,316 +6,148 @@
     <title>CereViva — Dashboard</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fc;
-            min-height: 100vh;
-        }
+        body { font-family: Arial, sans-serif; background: #f5f7fc; min-height: 100vh; }
 
         .navbar {
-            background: #2B4C8F;
-            padding: 16px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: #2B4C8F; padding: 16px 32px;
+            display: flex; justify-content: space-between; align-items: center;
         }
-
-        .navbar-brand {
-            color: white;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .navbar-subtitle {
-            color: rgba(255,255,255,0.7);
-            font-size: 13px;
-        }
-
+        .navbar-brand { color: white; font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+        .navbar-subtitle { color: rgba(255,255,255,0.7); font-size: 13px; }
         .btn-logout {
-            background: rgba(255,255,255,0.15);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
+            background: rgba(255,255,255,0.15); color: white; border: none;
+            padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px;
         }
-
         .btn-logout:hover { background: rgba(255,255,255,0.25); }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 32px 20px;
-        }
-
-        .top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        h2 {
-            font-size: 22px;
-            color: #1a1a1a;
-        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+        .top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        h2 { font-size: 22px; color: #1a1a1a; }
 
         .btn-primary {
-            background: #2B4C8F;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
+            background: #2B4C8F; color: white; border: none;
+            padding: 12px 24px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
         }
-
         .btn-primary:hover { background: #1a3a6b; }
 
-        /* Create link modal */
+        /* Modal */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.4);
+            z-index: 100; align-items: center; justify-content: center;
         }
-
         .modal-overlay.active { display: flex; }
-
         .modal {
-            background: white;
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 480px;
-            width: 100%;
-            margin: 20px;
+            background: white; border-radius: 16px; padding: 32px;
+            max-width: 480px; width: 100%; margin: 20px; max-height: 90vh; overflow-y: auto;
+        }
+        .modal h3 { font-size: 20px; color: #1a1a1a; margin-bottom: 8px; }
+        .modal p { font-size: 14px; color: #666; margin-bottom: 24px; }
+
+        /* Report Modal */
+        .report-modal {
+            background: white; border-radius: 16px; padding: 32px;
+            max-width: 750px; width: 100%; margin: 20px; max-height: 90vh; overflow-y: auto;
+        }
+        .report-header {
+            background: #2B4C8F; color: white; padding: 20px;
+            border-radius: 10px; margin-bottom: 24px;
+        }
+        .report-header h3 { font-size: 20px; margin-bottom: 4px; }
+        .report-header p { font-size: 13px; opacity: 0.8; margin: 0; }
+        .report-scores {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 12px; margin-bottom: 24px;
+        }
+        .report-score-card {
+            background: #f0f4ff; border-radius: 10px; padding: 14px; text-align: center;
+        }
+        .report-score-card .val { font-size: 24px; font-weight: 700; color: #2B4C8F; }
+        .report-score-card .lbl { font-size: 11px; color: #666; margin-top: 4px; }
+        .report-body {
+            background: #f9f9f9; border-radius: 10px; padding: 20px;
+            font-size: 14px; line-height: 1.8; color: #333; white-space: pre-wrap;
+        }
+        .report-actions {
+            display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end;
         }
 
-        .modal h3 {
-            font-size: 20px;
-            color: #1a1a1a;
-            margin-bottom: 8px;
-        }
-
-        .modal p {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 24px;
-        }
-
-        .field {
-            margin-bottom: 16px;
-        }
-
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 6px;
-        }
-
+        .field { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 6px; }
         input, select {
-            width: 100%;
-            border: 2px solid #e8e8e8;
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 14px;
-            color: #333;
-            outline: none;
+            width: 100%; border: 2px solid #e8e8e8; border-radius: 10px;
+            padding: 10px 14px; font-size: 14px; color: #333; outline: none;
         }
-
         input:focus, select:focus { border-color: #2B4C8F; }
 
-        .modal-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
+        .modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
         .btn-cancel {
-            flex: 1;
-            background: #f0f0f0;
-            color: #333;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 15px;
-            cursor: pointer;
+            flex: 1; background: #f0f0f0; color: #333; border: none;
+            padding: 12px; border-radius: 10px; font-size: 15px; cursor: pointer;
         }
-
         .btn-create {
-            flex: 2;
-            background: #2B4C8F;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
+            flex: 2; background: #2B4C8F; color: white; border: none;
+            padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
         }
 
-        /* Link result */
         .link-result {
-            display: none;
-            background: #f0f4ff;
-            border: 1px solid #c0d0ff;
-            border-radius: 10px;
-            padding: 16px;
-            margin-top: 16px;
+            display: none; background: #f0f4ff; border: 1px solid #c0d0ff;
+            border-radius: 10px; padding: 16px; margin-top: 16px;
         }
-
-        .link-result p {
-            font-size: 13px;
-            color: #2B4C8F;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .link-box {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
+        .link-result p { font-size: 13px; color: #2B4C8F; font-weight: 600; margin-bottom: 8px; }
+        .link-box { display: flex; gap: 8px; align-items: center; }
         .link-text {
-            flex: 1;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 13px;
-            color: #333;
-            word-break: break-all;
+            flex: 1; background: white; border: 1px solid #ddd; border-radius: 8px;
+            padding: 8px 12px; font-size: 13px; color: #333; word-break: break-all;
         }
-
         .btn-copy {
-            background: #2B4C8F;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            cursor: pointer;
-            white-space: nowrap;
+            background: #2B4C8F; color: white; border: none; padding: 8px 14px;
+            border-radius: 8px; font-size: 13px; cursor: pointer; white-space: nowrap;
         }
 
         /* Stats */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
         .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
+            background: white; border-radius: 12px; padding: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
-
-        .stat-number {
-            font-size: 32px;
-            font-weight: 700;
-            color: #2B4C8F;
-        }
-
-        .stat-label {
-            font-size: 13px;
-            color: #666;
-            margin-top: 4px;
-        }
+        .stat-number { font-size: 32px; font-weight: 700; color: #2B4C8F; }
+        .stat-label { font-size: 13px; color: #666; margin-top: 4px; }
 
         /* Table */
         .table-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            overflow: hidden;
+            background: white; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden;
         }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: #f8f9fc;
-        }
-
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f8f9fc; }
         th {
-            text-align: left;
-            padding: 14px 20px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid #eee;
+            text-align: left; padding: 14px 20px; font-size: 12px; font-weight: 700;
+            color: #666; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #eee;
         }
-
-        td {
-            padding: 16px 20px;
-            font-size: 14px;
-            color: #333;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
+        td { padding: 16px 20px; font-size: 14px; color: #333; border-bottom: 1px solid #f0f0f0; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: #f8f9fc; }
 
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge-pending {
-            background: #fff8e7;
-            color: #b37400;
-        }
-
-        .badge-completed {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-pending { background: #fff8e7; color: #b37400; }
+        .badge-completed { background: #e8f5e9; color: #2e7d32; }
         .score-pill {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            background: #f0f4ff;
-            color: #2B4C8F;
+            display: inline-block; padding: 4px 10px; border-radius: 20px;
+            font-size: 12px; font-weight: 700; background: #f0f4ff; color: #2B4C8F;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
+        .btn-view-report {
+            background: #e8f5e9; color: #2e7d32; border: none; padding: 6px 12px;
+            border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
         }
+        .btn-view-report:hover { background: #c8e6c9; }
 
-        .empty-state p {
-            font-size: 15px;
-            margin-bottom: 8px;
-        }
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+        .empty-state p { font-size: 15px; margin-bottom: 8px; }
+        .empty-state span { font-size: 13px; }
 
-        .empty-state span {
-            font-size: 13px;
-        }
+        .loading { text-align: center; padding: 40px; color: #999; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -329,7 +161,6 @@
 </div>
 
 <div class="container">
-
     <div class="top-row">
         <h2>Assessments</h2>
         <button class="btn-primary" onclick="openModal()">+ New Assessment Link</button>
@@ -362,20 +193,14 @@
                     <th>Score</th>
                     <th>Maturity Stage</th>
                     <th>Date</th>
+                    <th>Report</th>
                 </tr>
             </thead>
-            <<tbody id="assessments-table">
-    <tr>
-        <td colspan="6">
-            <div class="empty-state">
-                <p>Loading...</p>
-            </div>
-        </td>
-    </tr>
-</tbody>
+            <tbody id="assessments-table">
+                <tr><td colspan="7"><div class="loading">Loading assessments...</div></td></tr>
+            </tbody>
         </table>
     </div>
-
 </div>
 
 <!-- Create Link Modal -->
@@ -383,22 +208,18 @@
     <div class="modal">
         <h3>Create Assessment Link</h3>
         <p>Enter the client details to generate a unique assessment link.</p>
-
         <div class="field">
             <label>Client Name</label>
             <input type="text" id="client-name" placeholder="e.g. John Smith" />
         </div>
-
         <div class="field">
             <label>Client Email</label>
             <input type="email" id="client-email" placeholder="e.g. john@company.com" />
         </div>
-
         <div class="field">
             <label>Organisation Name</label>
             <input type="text" id="org-name" placeholder="e.g. Acme Corp" />
         </div>
-
         <div class="field">
             <label>Industry</label>
             <select id="industry">
@@ -413,15 +234,13 @@
                 <option>Other</option>
             </select>
         </div>
-
         <div class="link-result" id="link-result">
             <p>✓ Assessment link created! Share this with your client:</p>
             <div class="link-box">
                 <div class="link-text" id="generated-link"></div>
-                <button class="btn-copy" onclick="copyLink()">Copy</button>
+                <button class="btn-copy" id="copy-btn" onclick="copyLink()">Copy</button>
             </div>
         </div>
-
         <div class="modal-buttons">
             <button class="btn-cancel" onclick="closeModal()">Cancel</button>
             <button class="btn-create" id="btn-create" onclick="createLink()">Generate Link →</button>
@@ -429,41 +248,70 @@
     </div>
 </div>
 
+<!-- Report Viewer Modal -->
+<div class="modal-overlay" id="report-modal">
+    <div class="report-modal">
+        <div class="report-header">
+            <h3 id="report-org-name">Organisation Report</h3>
+            <p id="report-client-name">Client</p>
+        </div>
+        <div class="report-scores">
+            <div class="report-score-card">
+                <div class="val" id="report-score">—</div>
+                <div class="lbl">Overall Score</div>
+            </div>
+            <div class="report-score-card">
+                <div class="val" id="report-maturity" style="font-size:14px;">—</div>
+                <div class="lbl">Maturity Stage</div>
+            </div>
+            <div class="report-score-card">
+                <div class="val" id="report-risk" style="font-size:14px;">—</div>
+                <div class="lbl">Risk Band</div>
+            </div>
+        </div>
+        <div class="report-body" id="report-body">Loading report...</div>
+        <div class="report-actions">
+            <button class="btn-cancel" onclick="closeReportModal()">Close</button>
+            <button class="btn-primary" onclick="printReport()">🖨 Print Report</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Check if accessed from WordPress (skip_auth mode)
-const skipAuth = {{ skip_auth | tojson }};
-const token = localStorage.getItem("token");
+    const skipAuth = {{ skip_auth | tojson }};
+    const token = localStorage.getItem("token");
 
-if (!skipAuth && !token) {
-    // No WP token AND no JWT → go to login
-    window.location.href = "/login";
-}
-
-async function loadAssessments() {
-    const res = await fetch("/dashboard/assessments", {
-        headers: skipAuth ? {} : { "Authorization": "Bearer " + token }
-    });
-
-    if (!skipAuth && res.status === 401) {
+    if (!skipAuth && !token) {
         window.location.href = "/login";
-        return;
     }
+
+    const authHeaders = skipAuth
+        ? {}
+        : { "Authorization": "Bearer " + token };
+
+    // ── Load Assessments ──────────────────────────────────────
+    async function loadAssessments() {
+        const res = await fetch("/dashboard/assessments", { headers: authHeaders });
+
+        if (!skipAuth && res.status === 401) {
+            window.location.href = "/login";
+            return;
+        }
 
         const data = await res.json();
         const tbody = document.getElementById("assessments-table");
         const assessments = data.assessments;
 
-        // Update stats
         document.getElementById("stat-total").textContent = assessments.length;
         document.getElementById("stat-completed").textContent = assessments.filter(a => a.status === "completed").length;
         document.getElementById("stat-pending").textContent = assessments.filter(a => a.status === "pending").length;
 
         if (assessments.length === 0) {
             tbody.innerHTML = `
-                <tr><td colspan="6">
+                <tr><td colspan="7">
                     <div class="empty-state">
                         <p>No assessments yet</p>
-                        <span>Click "New Assessment Link" to get started</span>
+                        <span>Click "+ New Assessment Link" to get started</span>
                     </div>
                 </td></tr>`;
             return;
@@ -471,16 +319,53 @@ async function loadAssessments() {
 
         tbody.innerHTML = assessments.map(a => `
             <tr>
-                <td><strong>${a.client_name}</strong><br><span style="font-size:12px;color:#999">${a.client_email}</span></td>
+                <td>
+                    <strong>${a.client_name}</strong><br>
+                    <span style="font-size:12px;color:#999">${a.client_email}</span>
+                </td>
                 <td>${a.org_name}</td>
                 <td><span class="badge badge-${a.status}">${a.status}</span></td>
                 <td>${a.overall_score ? '<span class="score-pill">' + a.overall_score + ' / 5</span>' : '—'}</td>
                 <td>${a.maturity_stage || '—'}</td>
                 <td>${new Date(a.created_at).toLocaleDateString()}</td>
+                <td>
+                    ${a.status === 'completed' && a.assessment_id
+                        ? `<button class="btn-view-report" onclick="viewReport('${a.assessment_id}')">View Report</button>`
+                        : '—'}
+                </td>
             </tr>
         `).join("");
     }
 
+    // ── View Report ───────────────────────────────────────────
+    async function viewReport(assessmentId) {
+        document.getElementById("report-modal").classList.add("active");
+        document.getElementById("report-body").textContent = "Loading report...";
+
+        const res = await fetch(`/dashboard/report/${assessmentId}`, { headers: authHeaders });
+        if (!res.ok) {
+            document.getElementById("report-body").textContent = "Report not available yet.";
+            return;
+        }
+
+        const data = await res.json();
+        document.getElementById("report-org-name").textContent = data.org_name;
+        document.getElementById("report-client-name").textContent = data.client_name;
+        document.getElementById("report-score").textContent = data.overall_score + " / 5";
+        document.getElementById("report-maturity").textContent = data.maturity_stage;
+        document.getElementById("report-risk").textContent = data.risk_band;
+        document.getElementById("report-body").textContent = data.narrative;
+    }
+
+    function closeReportModal() {
+        document.getElementById("report-modal").classList.remove("active");
+    }
+
+    function printReport() {
+        window.print();
+    }
+
+    // ── Create Link Modal ─────────────────────────────────────
     function openModal() {
         document.getElementById("modal").classList.add("active");
         document.getElementById("link-result").style.display = "none";
@@ -512,16 +397,9 @@ async function loadAssessments() {
         btn.disabled = true;
 
         const res = await fetch("/assessment/create", {
-    method: "POST",
-    headers: skipAuth
-        ? { "Content-Type": "application/json" }
-        : { "Content-Type": "application/json", "Authorization": "Bearer " + token },
-            body: JSON.stringify({
-                client_name: clientName,
-                client_email: clientEmail,
-                org_name: orgName,
-                industry: industry
-            })
+            method: "POST",
+            headers: { "Content-Type": "application/json", ...authHeaders },
+            body: JSON.stringify({ client_name: clientName, client_email: clientEmail, org_name: orgName, industry })
         });
 
         const data = await res.json();
@@ -531,26 +409,28 @@ async function loadAssessments() {
         btn.style.display = "none";
     }
 
+    // ── Copy Link ─────────────────────────────────────────────
     function copyLink() {
-    const link = document.getElementById("generated-link").textContent;
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(link).then(() => {
-            document.querySelector(".btn-copy").textContent = "Copied!";
-            setTimeout(() => document.querySelector(".btn-copy").textContent = "Copy", 2000);
-        });
-    } else {
-        // Fallback for http or older browsers
-        const el = document.createElement("textarea");
-        el.value = link;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand("copy");
-        document.body.removeChild(el);
-        document.querySelector(".btn-copy").textContent = "Copied!";
-        setTimeout(() => document.querySelector(".btn-copy").textContent = "Copy", 2000);
+        const link = document.getElementById("generated-link").textContent;
+        const btn = document.getElementById("copy-btn");
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(link).then(() => {
+                btn.textContent = "Copied!";
+                setTimeout(() => btn.textContent = "Copy", 2000);
+            });
+        } else {
+            const el = document.createElement("textarea");
+            el.value = link;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand("copy");
+            document.body.removeChild(el);
+            btn.textContent = "Copied!";
+            setTimeout(() => btn.textContent = "Copy", 2000);
+        }
     }
-}
 
+    // ── Logout ────────────────────────────────────────────────
     function logout() {
         localStorage.removeItem("token");
         window.location.href = "/login";
