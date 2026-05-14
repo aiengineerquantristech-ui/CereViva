@@ -8,146 +8,87 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: #f5f7fc; min-height: 100vh; }
 
-        .navbar {
-            background: #2B4C8F; padding: 16px 32px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .navbar { background: #2B4C8F; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; }
         .navbar-brand { color: white; font-size: 18px; font-weight: 700; letter-spacing: 1px; }
         .navbar-subtitle { color: rgba(255,255,255,0.7); font-size: 13px; }
-        .btn-logout {
-            background: rgba(255,255,255,0.15); color: white; border: none;
-            padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px;
-        }
+        .btn-logout { background: rgba(255,255,255,0.15); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; }
         .btn-logout:hover { background: rgba(255,255,255,0.25); }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 32px 20px; }
         .top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         h2 { font-size: 22px; color: #1a1a1a; }
 
-        .btn-primary {
-            background: #2B4C8F; color: white; border: none;
-            padding: 12px 24px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
-        }
+        .btn-primary { background: #2B4C8F; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
         .btn-primary:hover { background: #1a3a6b; }
-
-        /* Modal */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: rgba(0,0,0,0.4);
-            z-index: 100; align-items: center; justify-content: center;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal {
-            background: white; border-radius: 16px; padding: 32px;
-            max-width: 480px; width: 100%; margin: 20px; max-height: 90vh; overflow-y: auto;
-        }
-        .modal h3 { font-size: 20px; color: #1a1a1a; margin-bottom: 8px; }
-        .modal p { font-size: 14px; color: #666; margin-bottom: 24px; }
-
-        /* Report Modal */
-        .report-modal {
-            background: white; border-radius: 16px; padding: 32px;
-            max-width: 750px; width: 100%; margin: 20px; max-height: 90vh; overflow-y: auto;
-        }
-        .report-header {
-            background: #2B4C8F; color: white; padding: 20px;
-            border-radius: 10px; margin-bottom: 24px;
-        }
-        .report-header h3 { font-size: 20px; margin-bottom: 4px; }
-        .report-header p { font-size: 13px; opacity: 0.8; margin: 0; }
-        .report-scores {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 12px; margin-bottom: 24px;
-        }
-        .report-score-card {
-            background: #f0f4ff; border-radius: 10px; padding: 14px; text-align: center;
-        }
-        .report-score-card .val { font-size: 24px; font-weight: 700; color: #2B4C8F; }
-        .report-score-card .lbl { font-size: 11px; color: #666; margin-top: 4px; }
-        .report-body {
-            background: #f9f9f9; border-radius: 10px; padding: 20px;
-            font-size: 14px; line-height: 1.8; color: #333; white-space: pre-wrap;
-        }
-        .report-actions {
-            display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end;
-        }
-
-        .field { margin-bottom: 16px; }
-        label { display: block; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 6px; }
-        input, select {
-            width: 100%; border: 2px solid #e8e8e8; border-radius: 10px;
-            padding: 10px 14px; font-size: 14px; color: #333; outline: none;
-        }
-        input:focus, select:focus { border-color: #2B4C8F; }
-
-        .modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
-        .btn-cancel {
-            flex: 1; background: #f0f0f0; color: #333; border: none;
-            padding: 12px; border-radius: 10px; font-size: 15px; cursor: pointer;
-        }
-        .btn-create {
-            flex: 2; background: #2B4C8F; color: white; border: none;
-            padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
-        }
-
-        .link-result {
-            display: none; background: #f0f4ff; border: 1px solid #c0d0ff;
-            border-radius: 10px; padding: 16px; margin-top: 16px;
-        }
-        .link-result p { font-size: 13px; color: #2B4C8F; font-weight: 600; margin-bottom: 8px; }
-        .link-box { display: flex; gap: 8px; align-items: center; }
-        .link-text {
-            flex: 1; background: white; border: 1px solid #ddd; border-radius: 8px;
-            padding: 8px 12px; font-size: 13px; color: #333; word-break: break-all;
-        }
-        .btn-copy {
-            background: #2B4C8F; color: white; border: none; padding: 8px 14px;
-            border-radius: 8px; font-size: 13px; cursor: pointer; white-space: nowrap;
-        }
 
         /* Stats */
         .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
-        .stat-card {
-            background: white; border-radius: 12px; padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
+        .stat-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         .stat-number { font-size: 32px; font-weight: 700; color: #2B4C8F; }
         .stat-label { font-size: 13px; color: #666; margin-top: 4px; }
 
         /* Table */
-        .table-card {
-            background: white; border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden;
-        }
+        .table-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
         thead { background: #f8f9fc; }
-        th {
-            text-align: left; padding: 14px 20px; font-size: 12px; font-weight: 700;
-            color: #666; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #eee;
-        }
-        td { padding: 16px 20px; font-size: 14px; color: #333; border-bottom: 1px solid #f0f0f0; }
+        th { text-align: left; padding: 14px 16px; font-size: 12px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #eee; }
+        td { padding: 14px 16px; font-size: 14px; color: #333; border-bottom: 1px solid #f0f0f0; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: #f8f9fc; }
 
         .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
         .badge-pending { background: #fff8e7; color: #b37400; }
         .badge-completed { background: #e8f5e9; color: #2e7d32; }
-        .score-pill {
-            display: inline-block; padding: 4px 10px; border-radius: 20px;
-            font-size: 12px; font-weight: 700; background: #f0f4ff; color: #2B4C8F;
-        }
+        .score-pill { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; background: #f0f4ff; color: #2B4C8F; }
 
-        .btn-view-report {
-            background: #e8f5e9; color: #2e7d32; border: none; padding: 6px 12px;
-            border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
-        }
-        .btn-view-report:hover { background: #c8e6c9; }
+        .actions { display: flex; gap: 6px; }
+        .btn-view { background: #e8f5e9; color: #2e7d32; border: none; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .btn-edit { background: #fff8e7; color: #b37400; border: none; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .btn-delete { background: #ffebee; color: #c62828; border: none; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .btn-view:hover { background: #c8e6c9; }
+        .btn-edit:hover { background: #ffecb3; }
+        .btn-delete:hover { background: #ffcdd2; }
 
         .empty-state { text-align: center; padding: 60px 20px; color: #999; }
         .empty-state p { font-size: 15px; margin-bottom: 8px; }
-        .empty-state span { font-size: 13px; }
 
-        .loading { text-align: center; padding: 40px; color: #999; font-size: 14px; }
+        /* Modals */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 16px; padding: 32px; max-width: 480px; width: 100%; margin: 20px; max-height: 90vh; overflow-y: auto; }
+        .modal h3 { font-size: 20px; color: #1a1a1a; margin-bottom: 8px; }
+        .modal p { font-size: 14px; color: #666; margin-bottom: 20px; }
+
+        /* Report Modal */
+        .report-modal { background: white; border-radius: 16px; padding: 32px; max-width: 750px; width: 100%; margin: 20px; max-height: 90vh; overflow-y: auto; }
+        .report-header { background: #2B4C8F; color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .report-header h3 { font-size: 20px; margin-bottom: 4px; }
+        .report-scores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .report-score-card { background: #f0f4ff; border-radius: 10px; padding: 14px; text-align: center; }
+        .report-score-card .val { font-size: 22px; font-weight: 700; color: #2B4C8F; }
+        .report-score-card .lbl { font-size: 11px; color: #666; margin-top: 4px; }
+        .report-body { background: #f9f9f9; border-radius: 10px; padding: 20px; font-size: 14px; line-height: 1.8; color: #333; white-space: pre-wrap; }
+        .report-actions { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; }
+
+        .field { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 6px; }
+        input, select { width: 100%; border: 2px solid #e8e8e8; border-radius: 10px; padding: 10px 14px; font-size: 14px; color: #333; outline: none; }
+        input:focus, select:focus { border-color: #2B4C8F; }
+
+        .modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
+        .btn-cancel { flex: 1; background: #f0f0f0; color: #333; border: none; padding: 12px; border-radius: 10px; font-size: 15px; cursor: pointer; }
+        .btn-create { flex: 2; background: #2B4C8F; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
+        .btn-danger { flex: 2; background: #c62828; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
+
+        .link-result { display: none; background: #f0f4ff; border: 1px solid #c0d0ff; border-radius: 10px; padding: 16px; margin-top: 16px; }
+        .link-result p { font-size: 13px; color: #2B4C8F; font-weight: 600; margin-bottom: 8px; }
+        .link-box { display: flex; gap: 8px; align-items: center; }
+        .link-text { flex: 1; background: white; border: 1px solid #ddd; border-radius: 8px; padding: 8px 12px; font-size: 13px; color: #333; word-break: break-all; }
+        .btn-copy { background: #2B4C8F; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+
+        .toast { position: fixed; bottom: 24px; right: 24px; background: #2B4C8F; color: white; padding: 12px 20px; border-radius: 10px; font-size: 14px; display: none; z-index: 999; }
+        .toast.show { display: block; }
+        .toast.error { background: #c62828; }
     </style>
 </head>
 <body>
@@ -163,10 +104,9 @@
 <div class="container">
     <div class="top-row">
         <h2>Assessments</h2>
-        <button class="btn-primary" onclick="openModal()">+ New Assessment Link</button>
+        <button class="btn-primary" onclick="openCreateModal()">+ New Assessment Link</button>
     </div>
 
-    <!-- Stats -->
     <div class="stats-row">
         <div class="stat-card">
             <div class="stat-number" id="stat-total">0</div>
@@ -182,7 +122,6 @@
         </div>
     </div>
 
-    <!-- Table -->
     <div class="table-card">
         <table>
             <thead>
@@ -193,45 +132,31 @@
                     <th>Score</th>
                     <th>Maturity Stage</th>
                     <th>Date</th>
-                    <th>Report</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="assessments-table">
-                <tr><td colspan="7"><div class="loading">Loading assessments...</div></td></tr>
+                <tr><td colspan="7"><div class="empty-state"><p>Loading...</p></div></td></tr>
             </tbody>
         </table>
     </div>
 </div>
 
-<!-- Create Link Modal -->
-<div class="modal-overlay" id="modal">
+<!-- Create Modal -->
+<div class="modal-overlay" id="create-modal">
     <div class="modal">
         <h3>Create Assessment Link</h3>
         <p>Enter the client details to generate a unique assessment link.</p>
-        <div class="field">
-            <label>Client Name</label>
-            <input type="text" id="client-name" placeholder="e.g. John Smith" />
-        </div>
-        <div class="field">
-            <label>Client Email</label>
-            <input type="email" id="client-email" placeholder="e.g. john@company.com" />
-        </div>
-        <div class="field">
-            <label>Organisation Name</label>
-            <input type="text" id="org-name" placeholder="e.g. Acme Corp" />
-        </div>
+        <div class="field"><label>Client Name</label><input type="text" id="client-name" placeholder="e.g. John Smith" /></div>
+        <div class="field"><label>Client Email</label><input type="email" id="client-email" placeholder="e.g. john@company.com" /></div>
+        <div class="field"><label>Organisation Name</label><input type="text" id="org-name" placeholder="e.g. Acme Corp" /></div>
         <div class="field">
             <label>Industry</label>
             <select id="industry">
                 <option value="">Select industry...</option>
-                <option>Construction</option>
-                <option>Mining</option>
-                <option>Manufacturing</option>
-                <option>Healthcare</option>
-                <option>Transport & Logistics</option>
-                <option>Oil & Gas</option>
-                <option>Agriculture</option>
-                <option>Other</option>
+                <option>Construction</option><option>Mining</option><option>Manufacturing</option>
+                <option>Healthcare</option><option>Transport & Logistics</option>
+                <option>Oil & Gas</option><option>Agriculture</option><option>Other</option>
             </select>
         </div>
         <div class="link-result" id="link-result">
@@ -242,142 +167,152 @@
             </div>
         </div>
         <div class="modal-buttons">
-            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-cancel" onclick="closeCreateModal()">Cancel</button>
             <button class="btn-create" id="btn-create" onclick="createLink()">Generate Link →</button>
         </div>
     </div>
 </div>
 
-<!-- Report Viewer Modal -->
-<div class="modal-overlay" id="report-modal">
-    <div class="report-modal">
-        <div class="report-header">
-            <h3 id="report-org-name">Organisation Report</h3>
-            <p id="report-client-name">Client</p>
+<!-- Edit Modal -->
+<div class="modal-overlay" id="edit-modal">
+    <div class="modal">
+        <h3>Edit Assessment</h3>
+        <p>Update the client details below.</p>
+        <input type="hidden" id="edit-assessment-id" />
+        <div class="field"><label>Client Name</label><input type="text" id="edit-client-name" /></div>
+        <div class="field"><label>Client Email</label><input type="email" id="edit-client-email" /></div>
+        <div class="field"><label>Organisation Name</label><input type="text" id="edit-org-name" /></div>
+        <div class="field">
+            <label>Industry</label>
+            <select id="edit-industry">
+                <option value="">Select industry...</option>
+                <option>Construction</option><option>Mining</option><option>Manufacturing</option>
+                <option>Healthcare</option><option>Transport & Logistics</option>
+                <option>Oil & Gas</option><option>Agriculture</option><option>Other</option>
+            </select>
         </div>
-        <div class="report-scores">
-            <div class="report-score-card">
-                <div class="val" id="report-score">—</div>
-                <div class="lbl">Overall Score</div>
-            </div>
-            <div class="report-score-card">
-                <div class="val" id="report-maturity" style="font-size:14px;">—</div>
-                <div class="lbl">Maturity Stage</div>
-            </div>
-            <div class="report-score-card">
-                <div class="val" id="report-risk" style="font-size:14px;">—</div>
-                <div class="lbl">Risk Band</div>
-            </div>
-        </div>
-        <div class="report-body" id="report-body">Loading report...</div>
-        <div class="report-actions">
-            <button class="btn-cancel" onclick="closeReportModal()">Close</button>
-            <button class="btn-primary" onclick="printReport()">🖨 Print Report</button>
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+            <button class="btn-create" onclick="saveEdit()">Save Changes</button>
         </div>
     </div>
 </div>
 
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="delete-modal">
+    <div class="modal">
+        <h3>Delete Assessment</h3>
+        <p>Are you sure you want to delete this assessment? This cannot be undone.</p>
+        <input type="hidden" id="delete-assessment-id" />
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Report Modal -->
+<div class="modal-overlay" id="report-modal">
+    <div class="report-modal">
+        <div class="report-header">
+            <h3 id="report-org-name">Report</h3>
+            <p id="report-client-name" style="opacity:0.8;margin:0"></p>
+        </div>
+        <div class="report-scores">
+            <div class="report-score-card"><div class="val" id="report-score">—</div><div class="lbl">Overall Score</div></div>
+            <div class="report-score-card"><div class="val" id="report-maturity" style="font-size:13px">—</div><div class="lbl">Maturity Stage</div></div>
+            <div class="report-score-card"><div class="val" id="report-risk" style="font-size:14px">—</div><div class="lbl">Risk Band</div></div>
+        </div>
+        <div class="report-body" id="report-body">Loading report...</div>
+        <div class="report-actions">
+            <button class="btn-cancel" onclick="closeReportModal()">Close</button>
+            <button class="btn-primary" onclick="window.print()">🖨 Print</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
     const skipAuth = {{ skip_auth | tojson }};
-    const token = localStorage.getItem("token");
+    const wpToken = {{ wp_token | tojson }};
+    const jwtToken = localStorage.getItem("token");
 
-    if (!skipAuth && !token) {
+    if (!skipAuth && !jwtToken) {
         window.location.href = "/login";
     }
 
-    const authHeaders = skipAuth
-        ? {}
-        : { "Authorization": "Bearer " + token };
+    // ── Build headers — KEY FIX: pass WP token in header ─────
+    function getHeaders(includeContent = false) {
+        const headers = {};
+        if (includeContent) headers["Content-Type"] = "application/json";
+        if (skipAuth && wpToken) {
+            headers["X-WP-Token"] = wpToken;
+        } else if (jwtToken) {
+            headers["Authorization"] = "Bearer " + jwtToken;
+        }
+        return headers;
+    }
+
+    function showToast(msg, isError = false) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.className = "toast show" + (isError ? " error" : "");
+        setTimeout(() => t.className = "toast", 3000);
+    }
 
     // ── Load Assessments ──────────────────────────────────────
     async function loadAssessments() {
-        const res = await fetch("/dashboard/assessments", { headers: authHeaders });
+        try {
+            const res = await fetch("/dashboard/assessments", { headers: getHeaders() });
+            if (res.status === 401) { window.location.href = "/login"; return; }
 
-        if (!skipAuth && res.status === 401) {
-            window.location.href = "/login";
-            return;
+            const data = await res.json();
+            const tbody = document.getElementById("assessments-table");
+            const assessments = data.assessments;
+
+            document.getElementById("stat-total").textContent = assessments.length;
+            document.getElementById("stat-completed").textContent = assessments.filter(a => a.status === "completed").length;
+            document.getElementById("stat-pending").textContent = assessments.filter(a => a.status === "pending").length;
+
+            if (assessments.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><p>No assessments yet</p><span>Click "+ New Assessment Link" to get started</span></div></td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = assessments.map(a => `
+                <tr>
+                    <td><strong>${a.client_name}</strong><br><span style="font-size:12px;color:#999">${a.client_email}</span></td>
+                    <td>${a.org_name}</td>
+                    <td><span class="badge badge-${a.status}">${a.status}</span></td>
+                    <td>${a.overall_score ? '<span class="score-pill">' + a.overall_score + ' / 5</span>' : '—'}</td>
+                    <td style="font-size:13px">${a.maturity_stage || '—'}</td>
+                    <td style="font-size:13px">${new Date(a.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <div class="actions">
+                            ${a.status === 'completed' ? `<button class="btn-view" onclick="viewReport('${a.assessment_id}')">📄 Report</button>` : ''}
+                            <button class="btn-edit" onclick="openEditModal('${a.assessment_id}','${a.client_name}','${a.client_email}','${a.org_name}','${a.industry || ''}')">✏️ Edit</button>
+                            <button class="btn-delete" onclick="openDeleteModal('${a.assessment_id}')">🗑 Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join("");
+        } catch(e) {
+            showToast("Failed to load assessments", true);
         }
-
-        const data = await res.json();
-        const tbody = document.getElementById("assessments-table");
-        const assessments = data.assessments;
-
-        document.getElementById("stat-total").textContent = assessments.length;
-        document.getElementById("stat-completed").textContent = assessments.filter(a => a.status === "completed").length;
-        document.getElementById("stat-pending").textContent = assessments.filter(a => a.status === "pending").length;
-
-        if (assessments.length === 0) {
-            tbody.innerHTML = `
-                <tr><td colspan="7">
-                    <div class="empty-state">
-                        <p>No assessments yet</p>
-                        <span>Click "+ New Assessment Link" to get started</span>
-                    </div>
-                </td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = assessments.map(a => `
-            <tr>
-                <td>
-                    <strong>${a.client_name}</strong><br>
-                    <span style="font-size:12px;color:#999">${a.client_email}</span>
-                </td>
-                <td>${a.org_name}</td>
-                <td><span class="badge badge-${a.status}">${a.status}</span></td>
-                <td>${a.overall_score ? '<span class="score-pill">' + a.overall_score + ' / 5</span>' : '—'}</td>
-                <td>${a.maturity_stage || '—'}</td>
-                <td>${new Date(a.created_at).toLocaleDateString()}</td>
-                <td>
-                    ${a.status === 'completed' && a.assessment_id
-                        ? `<button class="btn-view-report" onclick="viewReport('${a.assessment_id}')">View Report</button>`
-                        : '—'}
-                </td>
-            </tr>
-        `).join("");
     }
 
-    // ── View Report ───────────────────────────────────────────
-    async function viewReport(assessmentId) {
-        document.getElementById("report-modal").classList.add("active");
-        document.getElementById("report-body").textContent = "Loading report...";
-
-        const res = await fetch(`/dashboard/report/${assessmentId}`, { headers: authHeaders });
-        if (!res.ok) {
-            document.getElementById("report-body").textContent = "Report not available yet.";
-            return;
-        }
-
-        const data = await res.json();
-        document.getElementById("report-org-name").textContent = data.org_name;
-        document.getElementById("report-client-name").textContent = data.client_name;
-        document.getElementById("report-score").textContent = data.overall_score + " / 5";
-        document.getElementById("report-maturity").textContent = data.maturity_stage;
-        document.getElementById("report-risk").textContent = data.risk_band;
-        document.getElementById("report-body").textContent = data.narrative;
-    }
-
-    function closeReportModal() {
-        document.getElementById("report-modal").classList.remove("active");
-    }
-
-    function printReport() {
-        window.print();
-    }
-
-    // ── Create Link Modal ─────────────────────────────────────
-    function openModal() {
-        document.getElementById("modal").classList.add("active");
+    // ── Create Assessment ─────────────────────────────────────
+    function openCreateModal() {
+        document.getElementById("create-modal").classList.add("active");
         document.getElementById("link-result").style.display = "none";
         document.getElementById("btn-create").style.display = "block";
-        document.getElementById("client-name").value = "";
-        document.getElementById("client-email").value = "";
-        document.getElementById("org-name").value = "";
+        ["client-name","client-email","org-name"].forEach(id => document.getElementById(id).value = "");
         document.getElementById("industry").value = "";
     }
 
-    function closeModal() {
-        document.getElementById("modal").classList.remove("active");
+    function closeCreateModal() {
+        document.getElementById("create-modal").classList.remove("active");
         loadAssessments();
     }
 
@@ -387,10 +322,7 @@
         const orgName = document.getElementById("org-name").value.trim();
         const industry = document.getElementById("industry").value;
 
-        if (!clientName || !clientEmail || !orgName) {
-            alert("Please fill in all required fields.");
-            return;
-        }
+        if (!clientName || !clientEmail || !orgName) { alert("Please fill in all required fields."); return; }
 
         const btn = document.getElementById("btn-create");
         btn.textContent = "Generating...";
@@ -398,7 +330,7 @@
 
         const res = await fetch("/assessment/create", {
             method: "POST",
-            headers: { "Content-Type": "application/json", ...authHeaders },
+            headers: getHeaders(true),
             body: JSON.stringify({ client_name: clientName, client_email: clientEmail, org_name: orgName, industry })
         });
 
@@ -428,6 +360,87 @@
             btn.textContent = "Copied!";
             setTimeout(() => btn.textContent = "Copy", 2000);
         }
+    }
+
+    // ── Edit Assessment ───────────────────────────────────────
+    function openEditModal(id, name, email, org, industry) {
+        document.getElementById("edit-assessment-id").value = id;
+        document.getElementById("edit-client-name").value = name;
+        document.getElementById("edit-client-email").value = email;
+        document.getElementById("edit-org-name").value = org;
+        document.getElementById("edit-industry").value = industry;
+        document.getElementById("edit-modal").classList.add("active");
+    }
+
+    function closeEditModal() {
+        document.getElementById("edit-modal").classList.remove("active");
+    }
+
+    async function saveEdit() {
+        const id = document.getElementById("edit-assessment-id").value;
+        const res = await fetch(`/dashboard/assessment/${id}`, {
+            method: "PUT",
+            headers: getHeaders(true),
+            body: JSON.stringify({
+                client_name: document.getElementById("edit-client-name").value,
+                client_email: document.getElementById("edit-client-email").value,
+                org_name: document.getElementById("edit-org-name").value,
+                industry: document.getElementById("edit-industry").value,
+            })
+        });
+        if (res.ok) {
+            showToast("Assessment updated successfully ✅");
+            closeEditModal();
+            loadAssessments();
+        } else {
+            showToast("Failed to update assessment", true);
+        }
+    }
+
+    // ── Delete Assessment ─────────────────────────────────────
+    function openDeleteModal(id) {
+        document.getElementById("delete-assessment-id").value = id;
+        document.getElementById("delete-modal").classList.add("active");
+    }
+
+    function closeDeleteModal() {
+        document.getElementById("delete-modal").classList.remove("active");
+    }
+
+    async function confirmDelete() {
+        const id = document.getElementById("delete-assessment-id").value;
+        const res = await fetch(`/dashboard/assessment/${id}`, {
+            method: "DELETE",
+            headers: getHeaders()
+        });
+        if (res.ok) {
+            showToast("Assessment deleted ✅");
+            closeDeleteModal();
+            loadAssessments();
+        } else {
+            showToast("Failed to delete assessment", true);
+        }
+    }
+
+    // ── View Report ───────────────────────────────────────────
+    async function viewReport(id) {
+        document.getElementById("report-modal").classList.add("active");
+        document.getElementById("report-body").textContent = "Loading report...";
+
+        const res = await fetch(`/dashboard/report/${id}`, { headers: getHeaders() });
+        if (!res.ok) { document.getElementById("report-body").textContent = "Report not available yet."; return; }
+
+        const data = await res.json();
+        document.getElementById("report-org-name").textContent = data.org_name;
+        document.getElementById("report-client-name").textContent = data.client_name;
+        document.getElementById("report-score").textContent = data.overall_score + " / 5";
+        document.getElementById("report-maturity").textContent = data.maturity_stage;
+        document.getElementById("report-risk").textContent = data.risk_band;
+        document.getElementById("report-body").textContent = data.narrative;
+    }
+
+    function closeReportModal() {
+        document.getElementById("report-modal").classList.remove("active");
     }
 
     // ── Logout ────────────────────────────────────────────────

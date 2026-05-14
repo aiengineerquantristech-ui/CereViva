@@ -6,5 +6,5 @@ python-dotenv
 pydantic
 jinja2
 python-jose[cryptography]
-google-generativeai
+google-genai
 sendgrid

@@ -13,17 +13,12 @@ def generate_report(
     dimension_scores: list,
     top_risks: list,
 ) -> str:
-    """Generate a full AI report using Gemini API."""
+    client = genai.Client(api_key=GEMINI_API_KEY)
 
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-1.5-flash")
-
-    # Build dimension breakdown text
     dimension_text = "\n".join([
         f"  - {d['dimension']}: {d['score']}/5 ({d['risk_band']})"
         for d in dimension_scores
     ])
-
     top_risks_text = ", ".join(top_risks)
 
     prompt = f"""
@@ -50,35 +45,18 @@ TOP 3 RISK AREAS:
 Please generate a full report with the following sections:
 
 1. EXECUTIVE SUMMARY
-   - Brief overview of findings (2-3 paragraphs)
-   - Overall NeuroSafety posture
-
 2. MATURITY STAGE ANALYSIS
-   - What this stage means for the organisation
-   - Key characteristics observed
-
 3. DIMENSION BREAKDOWN
-   - Analysis of each dimension score
-   - What each score indicates
-
 4. TOP RISK AREAS
-   - Detailed analysis of the 3 highest risk dimensions
-   - Specific workplace impacts
-
-5. STRATEGIC RECOMMENDATIONS
-   - 5-7 specific, actionable recommendations
-   - Prioritised by impact and urgency
-
-6. ROADMAP TO NEXT STAGE
-   - Clear steps to progress to the next maturity stage
-   - 90-day action plan
-
+5. STRATEGIC RECOMMENDATIONS (5-7 actionable items)
+6. ROADMAP TO NEXT STAGE (90-day action plan)
 7. CONCLUSION
-   - Summary and encouragement
 
 Write in a professional but approachable tone. Be specific to the industry where possible.
-Format with clear headings and bullet points where appropriate.
 """
 
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt,
+    )
     return response.text
