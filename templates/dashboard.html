@@ -343,24 +343,47 @@
 
     // ── Copy Link ─────────────────────────────────────────────
     function copyLink() {
-        const link = document.getElementById("generated-link").textContent;
-        const btn = document.getElementById("copy-btn");
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(link).then(() => {
-                btn.textContent = "Copied!";
-                setTimeout(() => btn.textContent = "Copy", 2000);
-            });
-        } else {
-            const el = document.createElement("textarea");
-            el.value = link;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand("copy");
-            document.body.removeChild(el);
+    const link = document.getElementById("generated-link").textContent;
+    const btn = document.getElementById("copy-btn");
+
+    // Method 1: Clipboard API
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(link).then(() => {
             btn.textContent = "Copied!";
             setTimeout(() => btn.textContent = "Copy", 2000);
-        }
+        }).catch(() => fallbackCopy(link, btn));
+    } else {
+        fallbackCopy(link, btn);
     }
+}
+
+function fallbackCopy(link, btn) {
+    // Method 2: textarea trick (works in iframes)
+    try {
+        const el = document.createElement("textarea");
+        el.value = link;
+        el.style.position = "fixed";
+        el.style.opacity = "0";
+        document.body.appendChild(el);
+        el.focus();
+        el.select();
+        const success = document.execCommand("copy");
+        document.body.removeChild(el);
+        if (success) {
+            btn.textContent = "Copied!";
+            setTimeout(() => btn.textContent = "Copy", 2000);
+        } else {
+            promptCopy(link, btn);
+        }
+    } catch(e) {
+        promptCopy(link, btn);
+    }
+}
+
+function promptCopy(link, btn) {
+    // Method 3: show prompt to manually copy
+    window.prompt("Copy this link (Ctrl+C):", link);
+}
 
     // ── Edit Assessment ───────────────────────────────────────
     function openEditModal(id, name, email, org, industry) {
