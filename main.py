@@ -319,3 +319,4 @@ def get_assessments(
             "maturity_stage": a.report.maturity_stage if a.report else None,
         })
     return {"assessments": result}
+
