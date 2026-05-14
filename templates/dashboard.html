@@ -342,47 +342,52 @@
     }
 
     // ── Copy Link ─────────────────────────────────────────────
-    function copyLink() {
-    const link = document.getElementById("generated-link").textContent;
-    const btn = document.getElementById("copy-btn");
+    async function createLink() {
+    const clientName = document.getElementById("client-name").value.trim();
+    const clientEmail = document.getElementById("client-email").value.trim();
+    const orgName = document.getElementById("org-name").value.trim();
+    const industry = document.getElementById("industry").value;
 
-    // Method 1: Clipboard API
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(link).then(() => {
-            btn.textContent = "Copied!";
-            setTimeout(() => btn.textContent = "Copy", 2000);
-        }).catch(() => fallbackCopy(link, btn));
-    } else {
-        fallbackCopy(link, btn);
+    if (!clientName || !clientEmail || !orgName) { 
+        alert("Please fill in all required fields."); 
+        return; 
     }
-}
 
-function fallbackCopy(link, btn) {
-    // Method 2: textarea trick (works in iframes)
+    const btn = document.getElementById("btn-create");
+    btn.textContent = "Generating...";
+    btn.disabled = true;
+
     try {
-        const el = document.createElement("textarea");
-        el.value = link;
-        el.style.position = "fixed";
-        el.style.opacity = "0";
-        document.body.appendChild(el);
-        el.focus();
-        el.select();
-        const success = document.execCommand("copy");
-        document.body.removeChild(el);
-        if (success) {
-            btn.textContent = "Copied!";
-            setTimeout(() => btn.textContent = "Copy", 2000);
-        } else {
-            promptCopy(link, btn);
-        }
-    } catch(e) {
-        promptCopy(link, btn);
-    }
-}
+        const res = await fetch("/assessment/create", {
+            method: "POST",
+            headers: getHeaders(true),
+            body: JSON.stringify({ 
+                client_name: clientName, 
+                client_email: clientEmail, 
+                org_name: orgName, 
+                industry 
+            })
+        });
 
-function promptCopy(link, btn) {
-    // Method 3: show prompt to manually copy
-    window.prompt("Copy this link (Ctrl+C):", link);
+        if (!res.ok) {
+            const err = await res.json();
+            alert("Error: " + (err.detail || "Failed to create link"));
+            btn.textContent = "Generate Link →";
+            btn.disabled = false;
+            return;
+        }
+
+        const data = await res.json();
+        const link = window.location.origin + "/assess/" + data.token;
+        document.getElementById("generated-link").textContent = link;
+        document.getElementById("link-result").style.display = "block";
+        btn.style.display = "none";
+
+    } catch(e) {
+        alert("Network error: " + e.message);
+        btn.textContent = "Generate Link →";
+        btn.disabled = false;
+    }
 }
 
     // ── Edit Assessment ───────────────────────────────────────
