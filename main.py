@@ -16,6 +16,7 @@ from auth import verify_password, create_access_token, verify_token, PHOEBE_USER
 from gemini_report import generate_report
 from email_service import send_report_to_all
 import uuid
+from google import genai
 import os
 
 # ── App Setup ─────────────────────────────────────────────────
