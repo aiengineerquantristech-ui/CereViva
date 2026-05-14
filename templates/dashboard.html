@@ -430,21 +430,24 @@
 </div>
 
 <script>
-    const token = localStorage.getItem("token");
+    // Check if accessed from WordPress (skip_auth mode)
+const skipAuth = {{ skip_auth | tojson }};
+const token = localStorage.getItem("token");
 
-    if (!token) {
+if (!skipAuth && !token) {
+    // No WP token AND no JWT → go to login
+    window.location.href = "/login";
+}
+
+async function loadAssessments() {
+    const res = await fetch("/dashboard/assessments", {
+        headers: skipAuth ? {} : { "Authorization": "Bearer " + token }
+    });
+
+    if (!skipAuth && res.status === 401) {
         window.location.href = "/login";
+        return;
     }
-
-    async function loadAssessments() {
-        const res = await fetch("/dashboard/assessments", {
-            headers: { "Authorization": "Bearer " + token }
-        });
-
-        if (res.status === 401) {
-            window.location.href = "/login";
-            return;
-        }
 
         const data = await res.json();
         const tbody = document.getElementById("assessments-table");

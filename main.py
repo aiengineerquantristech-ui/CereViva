@@ -16,9 +16,20 @@ from auth import verify_password, create_access_token, verify_token, PHOEBE_USER
 
 import os
 
+from functools import wraps
+from fastapi.responses import RedirectResponse
 
 
 app = FastAPI()
+
+# ── WordPress Token Auth ──────────────────────────────────────
+WP_SECRET_TOKEN = os.environ.get('DASHBOARD_SECRET_TOKEN')
+
+def verify_wp_token(request: Request):
+    token = request.query_params.get('token')
+    if token and token == WP_SECRET_TOKEN:
+        return True
+    return False
 
 from database import Base, engine
 Base.metadata.create_all(bind=engine)
@@ -270,16 +281,31 @@ def login(data: LoginData):
 
 @app.get("/dashboard")
 def dashboard_page(request: Request):
+    wp_access = verify_wp_token(request)
+    
+    if not wp_access:
+        # No valid WP token → redirect to login page
+        return RedirectResponse(url="/login")
+    
     return templates.TemplateResponse(
         request=request,
         name="dashboard.html",
-        context={}
+        context={"skip_auth": True}  # 👈 tells template to skip login check
     )
 
 @app.get("/dashboard/assessments")
-def get_assessments(credentials: HTTPAuthorizationCredentials = Security(security), db: Session = Depends(get_db)):
-    if not verify_token(credentials.credentials):
+def get_assessments(
+    request: Request,
+    db: Session = Depends(get_db),
+    credentials: HTTPAuthorizationCredentials = Security(HTTPBearer(auto_error=False))
+):
+    # Allow access via WordPress secret token OR JWT
+    wp_access = verify_wp_token(request)
+    jwt_access = credentials and verify_token(credentials.credentials)
+    
+    if not wp_access and not jwt_access:
         raise HTTPException(status_code=401, detail="Unauthorized")
+    
     assessments = db.query(Assessment).order_by(Assessment.created_at.desc()).all()
     result = []
     for a in assessments:
