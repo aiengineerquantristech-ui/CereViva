@@ -538,7 +538,7 @@
           <p>✓ Assessment link created! Share this with your client:</p>
           <div class="link-box">
             <div class="link-text" id="generated-link"></div>
-            <button class="btn-copy" id="copy-btn" onclick="copyLink()">
+            <button class="btn-copy" id="copy-btn" onclick="handleCopy()">
               Copy
             </button>
           </div>
@@ -644,298 +644,318 @@
     <div class="toast" id="toast"></div>
 
     <script>
-          const skipAuth = {{ skip_auth | tojson }};
-          const wpToken = "{{ wp_token or '' }}";
-          const jwtToken = localStorage.getItem("token");
+                const skipAuth = {{ skip_auth | tojson }};
+                const wpToken = "{{ wp_token or '' }}";
+                const jwtToken = localStorage.getItem("token");
 
-          if (!skipAuth && !jwtToken) {
-              window.location.href = "/login";
+                if (!skipAuth && !jwtToken) {
+                    window.location.href = "/login";
+                }
+
+                // ── Build headers — KEY FIX: pass WP token in header ─────
+                function getHeaders(includeContent = false) {
+          const headers = {};
+          if (includeContent) headers["Content-Type"] = "application/json";
+          if (skipAuth && wpToken && wpToken !== 'None' && wpToken !== '') {
+              headers["X-WP-Token"] = wpToken;
+          } else if (jwtToken) {
+              headers["Authorization"] = "Bearer " + jwtToken;
           }
+          return headers;
+      }
 
-          // ── Build headers — KEY FIX: pass WP token in header ─────
-          function getHeaders(includeContent = false) {
-    const headers = {};
-    if (includeContent) headers["Content-Type"] = "application/json";
-    if (skipAuth && wpToken && wpToken !== 'None' && wpToken !== '') {
-        headers["X-WP-Token"] = wpToken;
-    } else if (jwtToken) {
-        headers["Authorization"] = "Bearer " + jwtToken;
-    }
-    return headers;
-}
+                function showToast(msg, isError = false) {
+                    const t = document.getElementById("toast");
+                    t.textContent = msg;
+                    t.className = "toast show" + (isError ? " error" : "");
+                    setTimeout(() => t.className = "toast", 3000);
+                }
 
-          function showToast(msg, isError = false) {
-              const t = document.getElementById("toast");
-              t.textContent = msg;
-              t.className = "toast show" + (isError ? " error" : "");
-              setTimeout(() => t.className = "toast", 3000);
-          }
-
-          // ── Load Assessments ──────────────────────────────────────
-          async function loadAssessments() {
-    try {
-        const res = await fetch("/dashboard/assessments", { headers: getHeaders() });
-        if (res.status === 401) { window.location.href = "/login"; return; }
-
-        const data = await res.json();
-        const tbody = document.getElementById("assessments-table");
-        const assessments = data.assessments;
-
-        document.getElementById("stat-total").textContent = assessments.length;
-        document.getElementById("stat-completed").textContent = assessments.filter(a => a.status === "completed").length;
-        document.getElementById("stat-pending").textContent = assessments.filter(a => a.status === "pending").length;
-
-        if (assessments.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No assessments yet</p><span>Click "+ New Assessment Link" to get started</span></div></td></tr>';
-            return;
-        }
-
-        // Build rows safely without template literals in onclick
-        const rows = assessments.map(a => {
-            const row = document.createElement("tr");
-
-            // Store data on the row element safely
-            const assessmentId = a.assessment_id;
-            const clientName = a.client_name || '';
-            const clientEmail = a.client_email || '';
-            const orgName = a.org_name || '';
-            const industry = a.industry || '';
-
-            row.innerHTML = `
-                <td>
-                    <strong>${clientName}</strong><br>
-                    <span style="font-size:12px;color:#999">${clientEmail}</span>
-                </td>
-                <td>${orgName}</td>
-                <td><span class="badge badge-${a.status}">${a.status}</span></td>
-                <td>${a.overall_score ? '<span class="score-pill">' + a.overall_score + ' / 5</span>' : '—'}</td>
-                <td style="font-size:13px">${a.maturity_stage || '—'}</td>
-                <td style="font-size:13px">${new Date(a.created_at).toLocaleDateString()}</td>
-                <td>
-                    <div class="actions" style="flex-direction:column;gap:4px;">
-                        ${a.status === 'completed' ? '<button class="btn-view report-btn">Report</button>' : ''}
-                        <button class="btn-edit edit-btn">Edit</button>
-                        <button class="btn-delete delete-btn">Delete</button>
-                    </div>
-                </td>
-            `;
-
-            // Attach events safely — no inline onclick needed
-            if (a.status === 'completed') {
-                row.querySelector('.report-btn').addEventListener('click', () => viewReport(assessmentId));
-            }
-            row.querySelector('.edit-btn').addEventListener('click', () => openEditModal(assessmentId, clientName, clientEmail, orgName, industry));
-            row.querySelector('.delete-btn').addEventListener('click', () => openDeleteModal(assessmentId));
-
-            return row;
-        });
-
-        tbody.innerHTML = '';
-        rows.forEach(row => tbody.appendChild(row));
-
-    } catch(e) {
-        console.error("loadAssessments error:", e);
-        showToast("Failed to load assessments", true);
-    }
-}
-
-          // ── Create Assessment ─────────────────────────────────────
-          function openCreateModal() {
-              document.getElementById("create-modal").classList.add("active");
-              document.getElementById("link-result").style.display = "none";
-              document.getElementById("btn-create").style.display = "block";
-              ["client-name","client-email","org-name"].forEach(id => document.getElementById(id).value = "");
-              document.getElementById("industry").value = "";
-          }
-
-          function closeCreateModal() {
-              document.getElementById("create-modal").classList.remove("active");
-              loadAssessments();
-          }
-
-          async function createLink() {
-              const clientName = document.getElementById("client-name").value.trim();
-              const clientEmail = document.getElementById("client-email").value.trim();
-              const orgName = document.getElementById("org-name").value.trim();
-              const industry = document.getElementById("industry").value;
-
-              if (!clientName || !clientEmail || !orgName) { alert("Please fill in all required fields."); return; }
-
-              const btn = document.getElementById("btn-create");
-              btn.textContent = "Generating...";
-              btn.disabled = true;
-
-              const res = await fetch("/assessment/create", {
-                  method: "POST",
-                  headers: getHeaders(true),
-                  body: JSON.stringify({ client_name: clientName, client_email: clientEmail, org_name: orgName, industry })
-              });
+                // ── Load Assessments ──────────────────────────────────────
+                async function loadAssessments() {
+          try {
+              const res = await fetch("/dashboard/assessments", { headers: getHeaders() });
+              if (res.status === 401) { window.location.href = "/login"; return; }
 
               const data = await res.json();
-              const link = window.location.origin + "/assess/" + data.token;
-              document.getElementById("generated-link").textContent = link;
-              document.getElementById("link-result").style.display = "block";
-              btn.style.display = "none";
-          }
+              const tbody = document.getElementById("assessments-table");
+              const assessments = data.assessments;
 
-          // ── Copy Link ─────────────────────────────────────────────
-          async function createLink() {
-          const clientName = document.getElementById("client-name").value.trim();
-          const clientEmail = document.getElementById("client-email").value.trim();
-          const orgName = document.getElementById("org-name").value.trim();
-          const industry = document.getElementById("industry").value;
+              document.getElementById("stat-total").textContent = assessments.length;
+              document.getElementById("stat-completed").textContent = assessments.filter(a => a.status === "completed").length;
+              document.getElementById("stat-pending").textContent = assessments.filter(a => a.status === "pending").length;
 
-          if (!clientName || !clientEmail || !orgName) {
-              alert("Please fill in all required fields.");
-              return;
-          }
-
-          const btn = document.getElementById("btn-create");
-          btn.textContent = "Generating...";
-          btn.disabled = true;
-
-          try {
-              const res = await fetch("/assessment/create", {
-                  method: "POST",
-                  headers: getHeaders(true),
-                  body: JSON.stringify({
-                      client_name: clientName,
-                      client_email: clientEmail,
-                      org_name: orgName,
-                      industry
-                  })
-              });
-
-              if (!res.ok) {
-                  const err = await res.json();
-                  alert("Error: " + (err.detail || "Failed to create link"));
-                  btn.textContent = "Generate Link →";
-                  btn.disabled = false;
+              if (assessments.length === 0) {
+                  tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No assessments yet</p><span>Click "+ New Assessment Link" to get started</span></div></td></tr>';
                   return;
               }
 
-              const data = await res.json();
-              const link = window.location.origin + "/assess/" + data.token;
-              document.getElementById("generated-link").textContent = link;
-              document.getElementById("link-result").style.display = "block";
-              btn.style.display = "none";
+              // Build rows safely without template literals in onclick
+              const rows = assessments.map(a => {
+                  const row = document.createElement("tr");
+
+                  // Store data on the row element safely
+                  const assessmentId = a.assessment_id;
+                  const clientName = a.client_name || '';
+                  const clientEmail = a.client_email || '';
+                  const orgName = a.org_name || '';
+                  const industry = a.industry || '';
+
+                  row.innerHTML = `
+                      <td>
+                          <strong>${clientName}</strong><br>
+                          <span style="font-size:12px;color:#999">${clientEmail}</span>
+                      </td>
+                      <td>${orgName}</td>
+                      <td><span class="badge badge-${a.status}">${a.status}</span></td>
+                      <td>${a.overall_score ? '<span class="score-pill">' + a.overall_score + ' / 5</span>' : '—'}</td>
+                      <td style="font-size:13px">${a.maturity_stage || '—'}</td>
+                      <td style="font-size:13px">${new Date(a.created_at).toLocaleDateString()}</td>
+                      <td>
+                          <div class="actions" style="flex-direction:column;gap:4px;">
+                              ${a.status === 'completed' ? '<button class="btn-view report-btn">Report</button>' : ''}
+                              <button class="btn-edit edit-btn">Edit</button>
+                              <button class="btn-delete delete-btn">Delete</button>
+                          </div>
+                      </td>
+                  `;
+
+                  // Attach events safely — no inline onclick needed
+                  if (a.status === 'completed') {
+                      row.querySelector('.report-btn').addEventListener('click', () => viewReport(assessmentId));
+                  }
+                  row.querySelector('.edit-btn').addEventListener('click', () => openEditModal(assessmentId, clientName, clientEmail, orgName, industry));
+                  row.querySelector('.delete-btn').addEventListener('click', () => openDeleteModal(assessmentId));
+
+                  return row;
+              });
+
+              tbody.innerHTML = '';
+              rows.forEach(row => tbody.appendChild(row));
 
           } catch(e) {
-              alert("Network error: " + e.message);
-              btn.textContent = "Generate Link →";
-              btn.disabled = false;
-          }
-      }
-      function copyToClipboard(text) {
-          // Try the modern API first
-          if (navigator.clipboard && window.isSecureContext) {
-              return navigator.clipboard.writeText(text);
-          } else {
-              // Fallback for non-HTTPS or if modern API is blocked
-              let textArea = document.createElement("textarea");
-              textArea.value = text;
-              textArea.style.position = "fixed"; // prevent scrolling to bottom
-              document.body.appendChild(textArea);
-              textArea.focus();
-              textArea.select();
-              try {
-                  document.execCommand('copy');
-                  alert("Link copied to clipboard!");
-              } catch (err) {
-                  console.error('Fallback: Oops, unable to copy', err);
-              }
-              document.body.removeChild(textArea);
+              console.error("loadAssessments error:", e);
+              showToast("Failed to load assessments", true);
           }
       }
 
-          // ── Edit Assessment ───────────────────────────────────────
-          function openEditModal(id, name, email, org, industry) {
-              document.getElementById("edit-assessment-id").value = id;
-              document.getElementById("edit-client-name").value = name;
-              document.getElementById("edit-client-email").value = email;
-              document.getElementById("edit-org-name").value = org;
-              document.getElementById("edit-industry").value = industry;
-              document.getElementById("edit-modal").classList.add("active");
+                // ── Create Assessment ─────────────────────────────────────
+                function openCreateModal() {
+                    document.getElementById("create-modal").classList.add("active");
+                    document.getElementById("link-result").style.display = "none";
+                    document.getElementById("btn-create").style.display = "block";
+                    ["client-name","client-email","org-name"].forEach(id => document.getElementById(id).value = "");
+                    document.getElementById("industry").value = "";
+                }
+
+                function closeCreateModal() {
+                    document.getElementById("create-modal").classList.remove("active");
+                    loadAssessments();
+                }
+
+                async function createLink() {
+                    const clientName = document.getElementById("client-name").value.trim();
+                    const clientEmail = document.getElementById("client-email").value.trim();
+                    const orgName = document.getElementById("org-name").value.trim();
+                    const industry = document.getElementById("industry").value;
+
+                    if (!clientName || !clientEmail || !orgName) { alert("Please fill in all required fields."); return; }
+
+                    const btn = document.getElementById("btn-create");
+                    btn.textContent = "Generating...";
+                    btn.disabled = true;
+
+                    const res = await fetch("/assessment/create", {
+                        method: "POST",
+                        headers: getHeaders(true),
+                        body: JSON.stringify({ client_name: clientName, client_email: clientEmail, org_name: orgName, industry })
+                    });
+
+                    const data = await res.json();
+                    const link = window.location.origin + "/assess/" + data.token;
+                    document.getElementById("generated-link").textContent = link;
+                    document.getElementById("link-result").style.display = "block";
+                    btn.style.display = "none";
+                }
+
+                // ── Copy Link ─────────────────────────────────────────────
+                async function createLink() {
+                const clientName = document.getElementById("client-name").value.trim();
+                const clientEmail = document.getElementById("client-email").value.trim();
+                const orgName = document.getElementById("org-name").value.trim();
+                const industry = document.getElementById("industry").value;
+
+                if (!clientName || !clientEmail || !orgName) {
+                    alert("Please fill in all required fields.");
+                    return;
+                }
+
+                const btn = document.getElementById("btn-create");
+                btn.textContent = "Generating...";
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch("/assessment/create", {
+                        method: "POST",
+                        headers: getHeaders(true),
+                        body: JSON.stringify({
+                            client_name: clientName,
+                            client_email: clientEmail,
+                            org_name: orgName,
+                            industry
+                        })
+                    });
+
+                    if (!res.ok) {
+                        const err = await res.json();
+                        alert("Error: " + (err.detail || "Failed to create link"));
+                        btn.textContent = "Generate Link →";
+                        btn.disabled = false;
+                        return;
+                    }
+
+                    const data = await res.json();
+                    const link = window.location.origin + "/assess/" + data.token;
+                    document.getElementById("generated-link").textContent = link;
+                    document.getElementById("link-result").style.display = "block";
+                    btn.style.display = "none";
+
+                } catch(e) {
+                    alert("Network error: " + e.message);
+                    btn.textContent = "Generate Link →";
+                    btn.disabled = false;
+                }
+            }
+            function copyToClipboard(text) {
+                // Try the modern API first
+                if (navigator.clipboard && window.isSecureContext) {
+                    return navigator.clipboard.writeText(text);
+                } else {
+                    // Fallback for non-HTTPS or if modern API is blocked
+                    let textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    textArea.style.position = "fixed"; // prevent scrolling to bottom
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        alert("Link copied to clipboard!");
+                    } catch (err) {
+                        console.error('Fallback: Oops, unable to copy', err);
+                    }
+                    document.body.removeChild(textArea);
+                }
+            }
+
+                // ── Edit Assessment ───────────────────────────────────────
+                function openEditModal(id, name, email, org, industry) {
+                    document.getElementById("edit-assessment-id").value = id;
+                    document.getElementById("edit-client-name").value = name;
+                    document.getElementById("edit-client-email").value = email;
+                    document.getElementById("edit-org-name").value = org;
+                    document.getElementById("edit-industry").value = industry;
+                    document.getElementById("edit-modal").classList.add("active");
+                }
+
+                function closeEditModal() {
+                    document.getElementById("edit-modal").classList.remove("active");
+                }
+
+                async function saveEdit() {
+                    const id = document.getElementById("edit-assessment-id").value;
+                    const res = await fetch(`/dashboard/assessment/${id}`, {
+                        method: "PUT",
+                        headers: getHeaders(true),
+                        body: JSON.stringify({
+                            client_name: document.getElementById("edit-client-name").value,
+                            client_email: document.getElementById("edit-client-email").value,
+                            org_name: document.getElementById("edit-org-name").value,
+                            industry: document.getElementById("edit-industry").value,
+                        })
+                    });
+                    if (res.ok) {
+                        showToast("Assessment updated successfully ✅");
+                        closeEditModal();
+                        loadAssessments();
+                    } else {
+                        showToast("Failed to update assessment", true);
+                    }
+                }
+
+                // ── Delete Assessment ─────────────────────────────────────
+                function openDeleteModal(id) {
+                    document.getElementById("delete-assessment-id").value = id;
+                    document.getElementById("delete-modal").classList.add("active");
+                }
+
+                function closeDeleteModal() {
+                    document.getElementById("delete-modal").classList.remove("active");
+                }
+
+                async function confirmDelete() {
+                    const id = document.getElementById("delete-assessment-id").value;
+                    const res = await fetch(`/dashboard/assessment/${id}`, {
+                        method: "DELETE",
+                        headers: getHeaders()
+                    });
+                    if (res.ok) {
+                        showToast("Assessment deleted ✅");
+                        closeDeleteModal();
+                        loadAssessments();
+                    } else {
+                        showToast("Failed to delete assessment", true);
+                    }
+                }
+
+                function handleCopy() {
+          const link = document.getElementById("generated-link").textContent;
+          const btn = document.getElementById("copy-btn");
+
+          try {
+              const el = document.createElement("textarea");
+              el.value = link;
+              el.style.position = "fixed";
+              el.style.opacity = "0";
+              document.body.appendChild(el);
+              el.focus();
+              el.select();
+              document.execCommand("copy");
+              document.body.removeChild(el);
+              btn.textContent = "Copied!";
+              setTimeout(() => btn.textContent = "Copy", 2000);
+          } catch(e) {
+              window.prompt("Copy this link:", link);
           }
+      }
+                // ── View Report ───────────────────────────────────────────
+                async function viewReport(id) {
+                    document.getElementById("report-modal").classList.add("active");
+                    document.getElementById("report-body").textContent = "Loading report...";
 
-          function closeEditModal() {
-              document.getElementById("edit-modal").classList.remove("active");
-          }
+                    const res = await fetch(`/dashboard/report/${id}`, { headers: getHeaders() });
+                    if (!res.ok) { document.getElementById("report-body").textContent = "Report not available yet."; return; }
 
-          async function saveEdit() {
-              const id = document.getElementById("edit-assessment-id").value;
-              const res = await fetch(`/dashboard/assessment/${id}`, {
-                  method: "PUT",
-                  headers: getHeaders(true),
-                  body: JSON.stringify({
-                      client_name: document.getElementById("edit-client-name").value,
-                      client_email: document.getElementById("edit-client-email").value,
-                      org_name: document.getElementById("edit-org-name").value,
-                      industry: document.getElementById("edit-industry").value,
-                  })
-              });
-              if (res.ok) {
-                  showToast("Assessment updated successfully ✅");
-                  closeEditModal();
-                  loadAssessments();
-              } else {
-                  showToast("Failed to update assessment", true);
-              }
-          }
+                    const data = await res.json();
+                    document.getElementById("report-org-name").textContent = data.org_name;
+                    document.getElementById("report-client-name").textContent = data.client_name;
+                    document.getElementById("report-score").textContent = data.overall_score + " / 5";
+                    document.getElementById("report-maturity").textContent = data.maturity_stage;
+                    document.getElementById("report-risk").textContent = data.risk_band;
+                    document.getElementById("report-body").textContent = data.narrative;
+                }
 
-          // ── Delete Assessment ─────────────────────────────────────
-          function openDeleteModal(id) {
-              document.getElementById("delete-assessment-id").value = id;
-              document.getElementById("delete-modal").classList.add("active");
-          }
+                function closeReportModal() {
+                    document.getElementById("report-modal").classList.remove("active");
+                }
 
-          function closeDeleteModal() {
-              document.getElementById("delete-modal").classList.remove("active");
-          }
+                // ── Logout ────────────────────────────────────────────────
+                function logout() {
+                    localStorage.removeItem("token");
+                    window.location.href = "/login";
+                }
 
-          async function confirmDelete() {
-              const id = document.getElementById("delete-assessment-id").value;
-              const res = await fetch(`/dashboard/assessment/${id}`, {
-                  method: "DELETE",
-                  headers: getHeaders()
-              });
-              if (res.ok) {
-                  showToast("Assessment deleted ✅");
-                  closeDeleteModal();
-                  loadAssessments();
-              } else {
-                  showToast("Failed to delete assessment", true);
-              }
-          }
-
-          // ── View Report ───────────────────────────────────────────
-          async function viewReport(id) {
-              document.getElementById("report-modal").classList.add("active");
-              document.getElementById("report-body").textContent = "Loading report...";
-
-              const res = await fetch(`/dashboard/report/${id}`, { headers: getHeaders() });
-              if (!res.ok) { document.getElementById("report-body").textContent = "Report not available yet."; return; }
-
-              const data = await res.json();
-              document.getElementById("report-org-name").textContent = data.org_name;
-              document.getElementById("report-client-name").textContent = data.client_name;
-              document.getElementById("report-score").textContent = data.overall_score + " / 5";
-              document.getElementById("report-maturity").textContent = data.maturity_stage;
-              document.getElementById("report-risk").textContent = data.risk_band;
-              document.getElementById("report-body").textContent = data.narrative;
-          }
-
-          function closeReportModal() {
-              document.getElementById("report-modal").classList.remove("active");
-          }
-
-          // ── Logout ────────────────────────────────────────────────
-          function logout() {
-              localStorage.removeItem("token");
-              window.location.href = "/login";
-          }
-
-          loadAssessments();
+                loadAssessments();
     </script>
   </body>
 </html>
