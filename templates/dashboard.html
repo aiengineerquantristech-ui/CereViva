@@ -528,8 +528,8 @@
             <option>Mining</option>
             <option>Manufacturing</option>
             <option>Healthcare</option>
-            <option>Transport & Logistics</option>
-            <option>Oil & Gas</option>
+            <option>Transport and Logistics</option>
+            <option>Oil and Gas</option>
             <option>Agriculture</option>
             <option>Other</option>
           </select>
@@ -579,8 +579,8 @@
             <option>Mining</option>
             <option>Manufacturing</option>
             <option>Healthcare</option>
-            <option>Transport & Logistics</option>
-            <option>Oil & Gas</option>
+            <option>Transport and Logistics</option>
+            <option>Oil and Gas</option>
             <option>Agriculture</option>
             <option>Other</option>
           </select>
@@ -673,44 +673,71 @@
 
           // ── Load Assessments ──────────────────────────────────────
           async function loadAssessments() {
-              try {
-                  const res = await fetch("/dashboard/assessments", { headers: getHeaders() });
-                  if (res.status === 401) { window.location.href = "/login"; return; }
+    try {
+        const res = await fetch("/dashboard/assessments", { headers: getHeaders() });
+        if (res.status === 401) { window.location.href = "/login"; return; }
 
-                  const data = await res.json();
-                  const tbody = document.getElementById("assessments-table");
-                  const assessments = data.assessments;
+        const data = await res.json();
+        const tbody = document.getElementById("assessments-table");
+        const assessments = data.assessments;
 
-                  document.getElementById("stat-total").textContent = assessments.length;
-                  document.getElementById("stat-completed").textContent = assessments.filter(a => a.status === "completed").length;
-                  document.getElementById("stat-pending").textContent = assessments.filter(a => a.status === "pending").length;
+        document.getElementById("stat-total").textContent = assessments.length;
+        document.getElementById("stat-completed").textContent = assessments.filter(a => a.status === "completed").length;
+        document.getElementById("stat-pending").textContent = assessments.filter(a => a.status === "pending").length;
 
-                  if (assessments.length === 0) {
-                      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><p>No assessments yet</p><span>Click "+ New Assessment Link" to get started</span></div></td></tr>`;
-                      return;
-                  }
+        if (assessments.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No assessments yet</p><span>Click "+ New Assessment Link" to get started</span></div></td></tr>';
+            return;
+        }
 
-                  tbody.innerHTML = assessments.map(a => `
-                      <tr>
-                          <td><strong>${a.client_name}</strong><br><span style="font-size:12px;color:#999">${a.client_email}</span></td>
-                          <td>${a.org_name}</td>
-                          <td><span class="badge badge-${a.status}">${a.status}</span></td>
-                          <td>${a.overall_score ? '<span class="score-pill">' + a.overall_score + ' / 5</span>' : '—'}</td>
-                          <td style="font-size:13px">${a.maturity_stage || '—'}</td>
-                          <td style="font-size:13px">${new Date(a.created_at).toLocaleDateString()}</td>
-                          <td>
-          <div class="actions" style="flex-direction:column;gap:4px;">
-              ${a.status === 'completed' ? `<button class="btn-view" onclick="viewReport('${a.assessment_id}')">📄 Report</button>` : ''}
-              <button class="btn-edit" onclick="openEditModal('${a.assessment_id}','${(a.client_name||'').replace(/'/g,&quot;&#39;&quot;)}','${a.client_email}','${(a.org_name||'').replace(/'/g,&quot;&#39;&quot;)}','${a.industry || ''}')">✏️ Edit</button>
-              <button class="btn-delete" onclick="openDeleteModal('${a.assessment_id}')">🗑️ Delete</button>
-          </div>
-      </td>
-                      </tr>
-                  `).join("");
-              } catch(e) {
-                  showToast("Failed to load assessments", true);
-              }
-          }
+        // Build rows safely without template literals in onclick
+        const rows = assessments.map(a => {
+            const row = document.createElement("tr");
+
+            // Store data on the row element safely
+            const assessmentId = a.assessment_id;
+            const clientName = a.client_name || '';
+            const clientEmail = a.client_email || '';
+            const orgName = a.org_name || '';
+            const industry = a.industry || '';
+
+            row.innerHTML = `
+                <td>
+                    <strong>${clientName}</strong><br>
+                    <span style="font-size:12px;color:#999">${clientEmail}</span>
+                </td>
+                <td>${orgName}</td>
+                <td><span class="badge badge-${a.status}">${a.status}</span></td>
+                <td>${a.overall_score ? '<span class="score-pill">' + a.overall_score + ' / 5</span>' : '—'}</td>
+                <td style="font-size:13px">${a.maturity_stage || '—'}</td>
+                <td style="font-size:13px">${new Date(a.created_at).toLocaleDateString()}</td>
+                <td>
+                    <div class="actions" style="flex-direction:column;gap:4px;">
+                        ${a.status === 'completed' ? '<button class="btn-view report-btn">Report</button>' : ''}
+                        <button class="btn-edit edit-btn">Edit</button>
+                        <button class="btn-delete delete-btn">Delete</button>
+                    </div>
+                </td>
+            `;
+
+            // Attach events safely — no inline onclick needed
+            if (a.status === 'completed') {
+                row.querySelector('.report-btn').addEventListener('click', () => viewReport(assessmentId));
+            }
+            row.querySelector('.edit-btn').addEventListener('click', () => openEditModal(assessmentId, clientName, clientEmail, orgName, industry));
+            row.querySelector('.delete-btn').addEventListener('click', () => openDeleteModal(assessmentId));
+
+            return row;
+        });
+
+        tbody.innerHTML = '';
+        rows.forEach(row => tbody.appendChild(row));
+
+    } catch(e) {
+        console.error("loadAssessments error:", e);
+        showToast("Failed to load assessments", true);
+    }
+}
 
           // ── Create Assessment ─────────────────────────────────────
           function openCreateModal() {
