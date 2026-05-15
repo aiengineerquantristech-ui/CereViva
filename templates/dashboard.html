@@ -1,634 +1,614 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CereViva — Dashboard</title>
     <style>
-      :root {
-        --brand-orange: #FF670A;
-        --brand-beige: #F5F1EA;
-        --light-orange: #FFBE58;
-        --white: #FFFFFF;
-        --black: #1a1a1a;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: var(--brand-beige);
-        color: var(--black);
-        min-height: 100vh;
-      }
-
-      /* Navbar Branding */
-      .navbar {
-        background: var(--brand-orange);
-        padding: 12px 32px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      }
-      .nav-left {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-      .logo-img {
-        height: 45px;
-        background: white; /* Temporary background so logo stands out if transparent */
-        padding: 5px;
-        border-radius: 6px;
-      }
-      .navbar-brand {
-        color: white;
-        font-size: 20px;
-        font-weight: 800;
-        letter-spacing: 0.5px;
-        line-height: 1;
-      }
-      .navbar-subtitle {
-        color: rgba(255, 255, 255, 0.85);
-        font-size: 12px;
-        font-weight: 500;
-        margin-top: 2px;
-      }
-
-      .nav-actions {
-        display: flex;
-        gap: 10px;
-      }
-      .btn-nav {
-        background: rgba(255, 255, 255, 0.15);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        padding: 8px 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 600;
-        transition: 0.2s;
-      }
-      .btn-nav:hover {
-        background: rgba(255, 255, 255, 0.3);
-      }
-
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 32px 20px;
-      }
-      
-      .top-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-      }
-
-      .btn-primary {
-        background: var(--brand-orange);
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 10px;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(255, 103, 10, 0.2);
-        transition: transform 0.1s;
-      }
-      .btn-primary:hover {
-        background: #e55a00;
-        transform: translateY(-1px);
-      }
-
-      /* Stats */
-      .stats-row {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
-        margin-bottom: 28px;
-      }
-      .stat-card {
-        background: white;
-        border-radius: 12px;
-        padding: 24px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        border-bottom: 4px solid var(--brand-orange);
-      }
-      .stat-number {
-        font-size: 36px;
-        font-weight: 800;
-        color: var(--brand-orange);
-      }
-      .stat-label {
-        font-size: 13px;
-        color: #666;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      /* Table Styles */
-      .table-card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-      }
-      table { width: 100%; border-collapse: collapse; }
-      thead { background: #fafafa; }
-      th {
-        text-align: left;
-        padding: 16px;
-        font-size: 11px;
-        font-weight: 800;
-        color: #888;
-        text-transform: uppercase;
-        border-bottom: 1px solid #eee;
-      }
-      td { padding: 16px; border-bottom: 1px solid #f8f8f8; }
-      tr:hover td { background: #fffcf9; }
-
-      .score-pill {
-        background: #fff0e6;
-        color: var(--brand-orange);
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-weight: 700;
-      }
-
-      /* Report Modal Layout */
-      .report-modal {
-        background: white;
-        border-radius: 16px;
-        padding: 0; /* Changed to handle header better */
-        max-width: 850px;
-        width: 100%;
-        max-height: 90vh;
-        display: flex;
-        flex-direction: column;
-      }
-      .report-header {
-        background: var(--brand-orange);
-        color: white;
-        padding: 30px;
-        border-radius: 16px 16px 0 0;
-      }
-      .report-scroll-area {
-        padding: 30px;
-        overflow-y: auto;
-      }
-      .report-body {
-        font-family: 'Georgia', serif;
-        font-size: 16px;
-        line-height: 1.6;
-        color: #2c3e50;
-      }
-
-      /* 🖨 PRINT LOGIC - CRITICAL FIX */
-      @media print {
-        @page { size: auto; margin: 20mm; }
-        body * { visibility: hidden; background: white !important; }
-        #report-modal, #report-modal * { visibility: visible; }
-        #report-modal {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            display: block !important;
-            box-shadow: none !important;
-            border: none !important;
+        :root {
+            --brand-orange: #FF670A;
+            --brand-beige: #F5F1EA;
+            --light-orange: #FFBE58;
+            --white: #FFFFFF;
+            --black: #1a1a1a;
         }
-        .report-header { background: var(--brand-orange) !important; -webkit-print-color-adjust: exact; }
-        .report-actions, .btn-cancel, .btn-primary { display: none !important; }
-        .report-scroll-area { overflow: visible !important; }
-      }
 
-      /* Rest of your existing modal/toast styles maintained but updated colors */
-      .modal-overlay {
-        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.6); z-index: 100; align-items: center; justify-content: center;
-      }
-      .modal-overlay.active { display: flex; }
-      .modal { background: white; border-radius: 16px; padding: 32px; max-width: 480px; width: 100%; }
-      input:focus, select:focus { border-color: var(--brand-orange); }
-      .badge-pending { background: #fff8e7; color: var(--light-orange); }
-      .btn-copy, .btn-create { background: var(--brand-orange); color: white; border: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--brand-beige);
+            color: var(--black);
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: var(--brand-orange);
+            padding: 12px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .nav-left { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 45px; background: white; padding: 5px; border-radius: 6px; }
+        .navbar-brand { color: white; font-size: 20px; font-weight: 800; letter-spacing: 0.5px; line-height: 1; }
+        .navbar-subtitle { color: rgba(255,255,255,0.85); font-size: 12px; font-weight: 500; margin-top: 2px; }
+
+        /* Container */
+        .container { max-width: 1200px; margin: 0 auto; padding: 32px 20px; }
+        .top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        h2 { font-size: 26px; font-weight: 800; }
+
+        .btn-primary {
+            background: var(--brand-orange); color: white; border: none;
+            padding: 12px 24px; border-radius: 10px; font-size: 15px; font-weight: 700;
+            cursor: pointer; box-shadow: 0 4px 12px rgba(255,103,10,0.2); transition: transform 0.1s;
+        }
+        .btn-primary:hover { background: #e55a00; transform: translateY(-1px); }
+
+        /* Stats */
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+        .stat-card {
+            background: white; border-radius: 12px; padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-bottom: 4px solid var(--brand-orange);
+        }
+        .stat-number { font-size: 36px; font-weight: 800; color: var(--brand-orange); }
+        .stat-label { font-size: 13px; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Table */
+        .table-card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #fafafa; }
+        th { text-align: left; padding: 16px; font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; border-bottom: 1px solid #eee; }
+        td { padding: 16px; border-bottom: 1px solid #f8f8f8; vertical-align: middle; }
+        tr:hover td { background: #fffcf9; }
+        tr:last-child td { border-bottom: none; }
+
+        .score-pill { background: #fff0e6; color: var(--brand-orange); padding: 4px 12px; border-radius: 20px; font-weight: 700; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-pending { background: #fff8e7; color: var(--light-orange); }
+        .badge-completed { background: #e8f5e9; color: #2e7d32; }
+
+        .actions { display: flex; flex-direction: column; gap: 5px; align-items: flex-end; }
+        .btn-view { background: #fff0e6; color: var(--brand-orange); border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; width: 80px; }
+        .btn-edit { background: #fff8e7; color: #b37400; border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; width: 80px; }
+        .btn-delete { background: #ffebee; color: #c62828; border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; width: 80px; }
+        .btn-view:hover { background: #ffd9c0; }
+        .btn-edit:hover { background: #ffecb3; }
+        .btn-delete:hover { background: #ffcdd2; }
+
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+
+        /* Modals */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.6);
+            z-index: 100; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white; border-radius: 16px; padding: 32px;
+            max-width: 480px; width: 100%; margin: 20px; max-height: 90vh; overflow-y: auto;
+        }
+        .modal h3 { font-size: 20px; font-weight: 800; color: var(--black); margin-bottom: 6px; }
+        .modal p { font-size: 14px; color: #666; margin-bottom: 20px; }
+
+        .field { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 6px; }
+        input, select {
+            width: 100%; border: 2px solid #e8e8e8; border-radius: 10px;
+            padding: 10px 14px; font-size: 14px; color: #333; outline: none; font-family: inherit;
+        }
+        input:focus, select:focus { border-color: var(--brand-orange); }
+
+        .modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
+        .btn-cancel { flex: 1; background: #f0f0f0; color: #333; border: none; padding: 12px; border-radius: 10px; font-size: 15px; cursor: pointer; }
+        .btn-create { flex: 2; background: var(--brand-orange); color: white; border: none; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
+        .btn-danger { flex: 2; background: #c62828; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
+
+        .link-result {
+            display: none; background: #fff0e6; border: 1px solid #ffbe98;
+            border-radius: 10px; padding: 16px; margin-top: 16px;
+        }
+        .link-result p { font-size: 13px; color: var(--brand-orange); font-weight: 700; margin-bottom: 8px; }
+        .link-box { display: flex; gap: 8px; align-items: center; }
+        .link-text {
+            flex: 1; background: white; border: 1px solid #ddd; border-radius: 8px;
+            padding: 8px 12px; font-size: 13px; color: #333; word-break: break-all;
+        }
+        .btn-copy {
+            background: var(--brand-orange); color: white; border: none;
+            padding: 8px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; white-space: nowrap;
+        }
+
+        /* Report Modal */
+        .report-modal {
+            background: white; border-radius: 16px; max-width: 850px;
+            width: 100%; max-height: 90vh; display: flex; flex-direction: column; margin: 20px;
+        }
+        .report-header { background: var(--brand-orange); color: white; padding: 30px; border-radius: 16px 16px 0 0; }
+        .report-scroll-area { padding: 30px; overflow-y: auto; }
+        .report-body { font-family: Georgia, serif; font-size: 15px; line-height: 1.8; color: #2c3e50; white-space: pre-wrap; }
+
+        /* Coming Soon Modal */
+        .coming-soon-modal {
+            background: white; border-radius: 16px; padding: 40px;
+            max-width: 400px; width: 100%; margin: 20px; text-align: center;
+        }
+        .coming-soon-icon { font-size: 48px; margin-bottom: 16px; }
+        .coming-soon-modal h3 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+        .coming-soon-modal p { color: #666; font-size: 14px; margin-bottom: 24px; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 24px; right: 24px; background: #333; color: white;
+            padding: 12px 20px; border-radius: 10px; font-size: 14px; display: none; z-index: 999;
+        }
+        .toast.show { display: block; }
+        .toast.error { background: #c62828; }
+        .toast.success { background: #2e7d32; }
+
+        /* Print */
+        @media print {
+            @page { size: auto; margin: 20mm; }
+            body * { visibility: hidden; background: white !important; }
+            #report-modal, #report-modal * { visibility: visible; }
+            #report-modal { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+            .report-header { background: var(--brand-orange) !important; -webkit-print-color-adjust: exact; }
+            .report-actions { display: none !important; }
+            .report-scroll-area { overflow: visible !important; }
+        }
     </style>
-  </head>
-  <body>
-    <div class="navbar">
-      <div class="nav-left">
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="nav-left">
         <img src="https://ceravive.digitalblocs.com/wp-content/uploads/2026/05/logo-1-2.png" alt="CereViva Logo" class="logo-img">
         <div>
-          <div class="navbar-brand">CereViva</div>
-          <div class="navbar-subtitle">NeuroSafety™ Assessment Platform</div>
+            <div class="navbar-brand">CereViva</div>
+            <div class="navbar-subtitle">NeuroSafety™ Assessment Platform</div>
         </div>
-      </div>
-      <div class="nav-actions">
-        <button class="btn-nav" onclick="showToast('Survey Editor coming soon')">⚙ Manage Survey</button>
-        <button class="btn-nav" onclick="logout()">Sign Out</button>
-      </div>
     </div>
+</div>
 
-    <div class="container">
-      <div class="top-row">
+<!-- Main Content -->
+<div class="container">
+    <div class="top-row">
         <h2>Active Assessments</h2>
-        <button class="btn-primary" onclick="openCreateModal()">
-          + Create New Assessment Link
-        </button>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-label">Total Volume</div>
-          <div class="stat-number" id="stat-total">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Completed Reports</div>
-          <div class="stat-number" id="stat-completed">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Pending Action</div>
-          <div class="stat-number" id="stat-pending" style="color: var(--light-orange)">0</div>
-        </div>
-      </div>
-
-      <div class="table-card">
-        <table>
-          <thead>
-            <tr>
-              <th>Client Details</th>
-              <th>Organisation</th>
-              <th>Status</th>
-              <th>Overall Score</th>
-              <th>Maturity</th>
-              <th>Created Date</th>
-              <th style="text-align: right;">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="assessments-table">
-            <tr><td colspan="7" style="text-align: center; padding: 50px;">Loading platform data...</td></tr>
-          </tbody>
-        </table>
-      </div>
+        <button class="btn-primary" id="create-btn">+ Create New Assessment Link</button>
     </div>
 
-    <div class="modal-overlay" id="report-modal">
-      <div class="report-modal">
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-label">Total Volume</div>
+            <div class="stat-number" id="stat-total">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Completed Reports</div>
+            <div class="stat-number" id="stat-completed">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Pending Action</div>
+            <div class="stat-number" id="stat-pending" style="color: var(--light-orange)">0</div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Client Details</th>
+                    <th>Organisation</th>
+                    <th>Status</th>
+                    <th>Overall Score</th>
+                    <th>Maturity</th>
+                    <th>Created Date</th>
+                    <th style="text-align:right">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="assessments-table">
+                <tr><td colspan="7" style="text-align:center;padding:50px;color:#999">Loading platform data...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create Assessment Modal -->
+<div class="modal-overlay" id="create-modal">
+    <div class="modal">
+        <h3>Create Assessment Link</h3>
+        <p>Enter client details to generate a unique assessment link.</p>
+        <div class="field"><label>Client Name *</label><input type="text" id="client-name" placeholder="e.g. John Smith" /></div>
+        <div class="field"><label>Client Email *</label><input type="email" id="client-email" placeholder="e.g. john@company.com" /></div>
+        <div class="field"><label>Organisation Name *</label><input type="text" id="org-name" placeholder="e.g. Acme Corp" /></div>
+        <div class="field">
+            <label>Industry</label>
+            <select id="industry">
+                <option value="">Select industry...</option>
+                <option value="Construction">Construction</option>
+                <option value="Mining">Mining</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Transport and Logistics">Transport and Logistics</option>
+                <option value="Oil and Gas">Oil and Gas</option>
+                <option value="Agriculture">Agriculture</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="link-result" id="link-result">
+            <p>✓ Assessment link created! Share this with your client:</p>
+            <div class="link-box">
+                <div class="link-text" id="generated-link"></div>
+                <button class="btn-copy" id="copy-btn">Copy</button>
+            </div>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn-cancel" id="cancel-create-btn">Cancel</button>
+            <button class="btn-create" id="btn-create">Generate Link →</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="edit-modal">
+    <div class="modal">
+        <h3>Edit Assessment</h3>
+        <p>Update the client details below.</p>
+        <input type="hidden" id="edit-assessment-id" />
+        <div class="field"><label>Client Name</label><input type="text" id="edit-client-name" /></div>
+        <div class="field"><label>Client Email</label><input type="email" id="edit-client-email" /></div>
+        <div class="field"><label>Organisation Name</label><input type="text" id="edit-org-name" /></div>
+        <div class="field">
+            <label>Industry</label>
+            <select id="edit-industry">
+                <option value="">Select industry...</option>
+                <option value="Construction">Construction</option>
+                <option value="Mining">Mining</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Transport and Logistics">Transport and Logistics</option>
+                <option value="Oil and Gas">Oil and Gas</option>
+                <option value="Agriculture">Agriculture</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn-cancel" id="cancel-edit-btn">Cancel</button>
+            <button class="btn-create" id="save-edit-btn">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal-overlay" id="delete-modal">
+    <div class="modal">
+        <h3>Delete Assessment</h3>
+        <p>Are you sure you want to delete this assessment? This action cannot be undone and will remove all associated data.</p>
+        <input type="hidden" id="delete-assessment-id" />
+        <div class="modal-buttons">
+            <button class="btn-cancel" id="cancel-delete-btn">Cancel</button>
+            <button class="btn-danger" id="confirm-delete-btn">Delete Permanently</button>
+        </div>
+    </div>
+</div>
+
+<!-- Report Modal -->
+<div class="modal-overlay" id="report-modal">
+    <div class="report-modal">
         <div class="report-header">
-          <h1 id="report-org-name" style="margin-bottom: 5px;">Report</h1>
-          <p id="report-client-name" style="opacity: 0.9; font-weight: 500;"></p>
+            <h1 id="report-org-name" style="margin-bottom:5px">Report</h1>
+            <p id="report-client-name" style="opacity:0.9;font-weight:500;margin:0"></p>
         </div>
         <div class="report-scroll-area">
-            <div class="report-scores" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 30px;">
-                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 11px; text-transform: uppercase; color: #888;">Overall Score</div>
-                    <div id="report-score" style="font-size: 24px; font-weight: 800; color: var(--brand-orange);">—</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-bottom:30px">
+                <div style="background:#f9f9f9;padding:15px;border-radius:8px;text-align:center">
+                    <div style="font-size:11px;text-transform:uppercase;color:#888">Overall Score</div>
+                    <div id="report-score" style="font-size:24px;font-weight:800;color:var(--brand-orange)">—</div>
                 </div>
-                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 11px; text-transform: uppercase; color: #888;">Maturity Stage</div>
-                    <div id="report-maturity" style="font-size: 16px; font-weight: 700; color: #333;">—</div>
+                <div style="background:#f9f9f9;padding:15px;border-radius:8px;text-align:center">
+                    <div style="font-size:11px;text-transform:uppercase;color:#888">Maturity Stage</div>
+                    <div id="report-maturity" style="font-size:15px;font-weight:700;color:#333">—</div>
                 </div>
-                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 11px; text-transform: uppercase; color: #888;">Risk Band</div>
-                    <div id="report-risk" style="font-size: 16px; font-weight: 700; color: #333;">—</div>
+                <div style="background:#f9f9f9;padding:15px;border-radius:8px;text-align:center">
+                    <div style="font-size:11px;text-transform:uppercase;color:#888">Risk Band</div>
+                    <div id="report-risk" style="font-size:15px;font-weight:700;color:#333">—</div>
                 </div>
             </div>
             <div class="report-body" id="report-body">Loading report analysis...</div>
-            
-            <div class="report-actions" style="margin-top: 40px; display: flex; justify-content: flex-end; gap: 10px;">
-                <button class="btn-cancel" style="background: #eee; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer;" onclick="closeReportModal()">Close Dashboard</button>
-                <button class="btn-primary" onclick="window.print()">🖨 Print as PDF</button>
+            <div class="report-actions" style="margin-top:40px;display:flex;justify-content:flex-end;gap:10px">
+                <button class="btn-cancel" id="close-report-btn" style="background:#eee;padding:10px 20px;border-radius:8px;border:none;cursor:pointer">Close</button>
+                <button class="btn-primary" id="print-btn">🖨 Print as PDF</button>
             </div>
         </div>
-      </div>
     </div>
+</div>
 
-    <div class="toast" id="toast"></div>
+<!-- Coming Soon Modal -->
+<div class="modal-overlay" id="coming-soon-modal">
+    <div class="coming-soon-modal">
+        <div class="coming-soon-icon">🚧</div>
+        <h3>Coming Soon</h3>
+        <p>The Survey Editor is currently under development. You'll be able to create and edit survey forms directly from this dashboard in a future update.</p>
+        <button class="btn-primary" id="close-coming-soon-btn" style="width:100%">Got it</button>
+    </div>
+</div>
 
-    <script>
-      
-                const skipAuth = {{ skip_auth | tojson }};
-                const wpToken = "{{ wp_token or '' }}";
-                const jwtToken = localStorage.getItem("token");
+<div class="toast" id="toast"></div>
 
-                if (!skipAuth && !jwtToken) {
-                    window.location.href = "/login";
-                }
+<script>
+    const skipAuth = {{ skip_auth | tojson }};
+    const wpToken = "{{ wp_token or '' }}";
+    const jwtToken = localStorage.getItem("token");
 
-                // ── Build headers — KEY FIX: pass WP token in header ─────
-                function getHeaders(includeContent = false) {
-          const headers = {};
-          if (includeContent) headers["Content-Type"] = "application/json";
-          if (skipAuth && wpToken && wpToken !== 'None' && wpToken !== '') {
-              headers["X-WP-Token"] = wpToken;
-          } else if (jwtToken) {
-              headers["Authorization"] = "Bearer " + jwtToken;
-          }
-          return headers;
-      }
+    if (!skipAuth && !jwtToken) {
+        window.location.href = "/login";
+    }
 
-                function showToast(msg, isError = false) {
-                    const t = document.getElementById("toast");
-                    t.textContent = msg;
-                    t.className = "toast show" + (isError ? " error" : "");
-                    setTimeout(() => t.className = "toast", 3000);
-                }
+    // ── Headers ───────────────────────────────────────────────
+    function getHeaders(includeContent = false) {
+        const headers = {};
+        if (includeContent) headers["Content-Type"] = "application/json";
+        if (skipAuth && wpToken && wpToken !== 'None' && wpToken !== '') {
+            headers["X-WP-Token"] = wpToken;
+        } else if (jwtToken) {
+            headers["Authorization"] = "Bearer " + jwtToken;
+        }
+        return headers;
+    }
 
-                // ── Load Assessments ──────────────────────────────────────
-                async function loadAssessments() {
-          try {
-              const res = await fetch("/dashboard/assessments", { headers: getHeaders() });
-              if (res.status === 401) { window.location.href = "/login"; return; }
+    // ── Toast ─────────────────────────────────────────────────
+    function showToast(msg, type = '') {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.className = "toast show" + (type ? " " + type : "");
+        setTimeout(() => t.className = "toast", 3000);
+    }
 
-              const data = await res.json();
-              const tbody = document.getElementById("assessments-table");
-              const assessments = data.assessments;
+    // ── Load Assessments ──────────────────────────────────────
+    async function loadAssessments() {
+        try {
+            const res = await fetch("/dashboard/assessments", { headers: getHeaders() });
+            if (res.status === 401) { window.location.href = "/login"; return; }
 
-              document.getElementById("stat-total").textContent = assessments.length;
-              document.getElementById("stat-completed").textContent = assessments.filter(a => a.status === "completed").length;
-              document.getElementById("stat-pending").textContent = assessments.filter(a => a.status === "pending").length;
+            const data = await res.json();
+            const tbody = document.getElementById("assessments-table");
+            const assessments = data.assessments;
 
-              if (assessments.length === 0) {
-                  tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No assessments yet</p><span>Click "+ New Assessment Link" to get started</span></div></td></tr>';
-                  return;
-              }
+            document.getElementById("stat-total").textContent = assessments.length;
+            document.getElementById("stat-completed").textContent = assessments.filter(a => a.status === "completed").length;
+            document.getElementById("stat-pending").textContent = assessments.filter(a => a.status === "pending").length;
 
-              // Build rows safely without template literals in onclick
-              const rows = assessments.map(a => {
-                  const row = document.createElement("tr");
-
-                  // Store data on the row element safely
-                  const assessmentId = a.assessment_id;
-                  const clientName = a.client_name || '';
-                  const clientEmail = a.client_email || '';
-                  const orgName = a.org_name || '';
-                  const industry = a.industry || '';
-
-                  row.innerHTML = `
-                      <td>
-                          <strong>${clientName}</strong><br>
-                          <span style="font-size:12px;color:#999">${clientEmail}</span>
-                      </td>
-                      <td>${orgName}</td>
-                      <td><span class="badge badge-${a.status}">${a.status}</span></td>
-                      <td>${a.overall_score ? '<span class="score-pill">' + a.overall_score + ' / 5</span>' : '—'}</td>
-                      <td style="font-size:13px">${a.maturity_stage || '—'}</td>
-                      <td style="font-size:13px">${new Date(a.created_at).toLocaleDateString()}</td>
-                      <td>
-                          <div class="actions" style="flex-direction:column;gap:4px;">
-                              ${a.status === 'completed' ? '<button class="btn-view report-btn">Report</button>' : ''}
-                              <button class="btn-edit edit-btn">Edit</button>
-                              <button class="btn-delete delete-btn">Delete</button>
-                          </div>
-                      </td>
-                  `;
-
-                  // Attach events safely — no inline onclick needed
-                  if (a.status === 'completed') {
-                      row.querySelector('.report-btn').addEventListener('click', () => viewReport(assessmentId));
-                  }
-                  row.querySelector('.edit-btn').addEventListener('click', () => openEditModal(assessmentId, clientName, clientEmail, orgName, industry));
-                  row.querySelector('.delete-btn').addEventListener('click', () => openDeleteModal(assessmentId));
-
-                  return row;
-              });
-
-              tbody.innerHTML = '';
-              rows.forEach(row => tbody.appendChild(row));
-
-          } catch(e) {
-              console.error("loadAssessments error:", e);
-              showToast("Failed to load assessments", true);
-          }
-      }
-
-                // ── Create Assessment ─────────────────────────────────────
-                function openCreateModal() {
-                    document.getElementById("create-modal").classList.add("active");
-                    document.getElementById("link-result").style.display = "none";
-                    document.getElementById("btn-create").style.display = "block";
-                    ["client-name","client-email","org-name"].forEach(id => document.getElementById(id).value = "");
-                    document.getElementById("industry").value = "";
-                }
-
-                function closeCreateModal() {
-                    document.getElementById("create-modal").classList.remove("active");
-                    loadAssessments();
-                }
-
-                async function createLink() {
-                    const clientName = document.getElementById("client-name").value.trim();
-                    const clientEmail = document.getElementById("client-email").value.trim();
-                    const orgName = document.getElementById("org-name").value.trim();
-                    const industry = document.getElementById("industry").value;
-
-                    if (!clientName || !clientEmail || !orgName) { alert("Please fill in all required fields."); return; }
-
-                    const btn = document.getElementById("btn-create");
-                    btn.textContent = "Generating...";
-                    btn.disabled = true;
-
-                    const res = await fetch("/assessment/create", {
-                        method: "POST",
-                        headers: getHeaders(true),
-                        body: JSON.stringify({ client_name: clientName, client_email: clientEmail, org_name: orgName, industry })
-                    });
-
-                    const data = await res.json();
-                    const link = window.location.origin + "/assess/" + data.token;
-                    document.getElementById("generated-link").textContent = link;
-                    document.getElementById("link-result").style.display = "block";
-                    btn.style.display = "none";
-                }
-
-                // ── Copy Link ─────────────────────────────────────────────
-                async function createLink() {
-                const clientName = document.getElementById("client-name").value.trim();
-                const clientEmail = document.getElementById("client-email").value.trim();
-                const orgName = document.getElementById("org-name").value.trim();
-                const industry = document.getElementById("industry").value;
-
-                if (!clientName || !clientEmail || !orgName) {
-                    alert("Please fill in all required fields.");
-                    return;
-                }
-
-                const btn = document.getElementById("btn-create");
-                btn.textContent = "Generating...";
-                btn.disabled = true;
-
-                try {
-                    const res = await fetch("/assessment/create", {
-                        method: "POST",
-                        headers: getHeaders(true),
-                        body: JSON.stringify({
-                            client_name: clientName,
-                            client_email: clientEmail,
-                            org_name: orgName,
-                            industry
-                        })
-                    });
-
-                    if (!res.ok) {
-                        const err = await res.json();
-                        alert("Error: " + (err.detail || "Failed to create link"));
-                        btn.textContent = "Generate Link →";
-                        btn.disabled = false;
-                        return;
-                    }
-
-                    const data = await res.json();
-                    const link = window.location.origin + "/assess/" + data.token;
-                    document.getElementById("generated-link").textContent = link;
-                    document.getElementById("link-result").style.display = "block";
-                    btn.style.display = "none";
-
-                } catch(e) {
-                    alert("Network error: " + e.message);
-                    btn.textContent = "Generate Link →";
-                    btn.disabled = false;
-                }
-            }
-            function copyToClipboard(text) {
-                // Try the modern API first
-                if (navigator.clipboard && window.isSecureContext) {
-                    return navigator.clipboard.writeText(text);
-                } else {
-                    // Fallback for non-HTTPS or if modern API is blocked
-                    let textArea = document.createElement("textarea");
-                    textArea.value = text;
-                    textArea.style.position = "fixed"; // prevent scrolling to bottom
-                    document.body.appendChild(textArea);
-                    textArea.focus();
-                    textArea.select();
-                    try {
-                        document.execCommand('copy');
-                        alert("Link copied to clipboard!");
-                    } catch (err) {
-                        console.error('Fallback: Oops, unable to copy', err);
-                    }
-                    document.body.removeChild(textArea);
-                }
+            if (assessments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No assessments yet</p><span>Click &quot;+ Create New Assessment Link&quot; to get started</span></div></td></tr>';
+                return;
             }
 
-                // ── Edit Assessment ───────────────────────────────────────
-                function openEditModal(id, name, email, org, industry) {
-                    document.getElementById("edit-assessment-id").value = id;
-                    document.getElementById("edit-client-name").value = name;
-                    document.getElementById("edit-client-email").value = email;
-                    document.getElementById("edit-org-name").value = org;
-                    document.getElementById("edit-industry").value = industry;
-                    document.getElementById("edit-modal").classList.add("active");
+            tbody.innerHTML = '';
+            assessments.forEach(a => {
+                const row = document.createElement("tr");
+                const assessmentId = a.assessment_id;
+                const clientName = a.client_name || '';
+                const clientEmail = a.client_email || '';
+                const orgName = a.org_name || '';
+                const industry = a.industry || '';
+
+                row.innerHTML = `
+                    <td>
+                        <strong>${clientName}</strong><br>
+                        <span style="font-size:12px;color:#999">${clientEmail}</span>
+                    </td>
+                    <td>${orgName}</td>
+                    <td><span class="badge badge-${a.status}">${a.status}</span></td>
+                    <td>${a.overall_score ? '<span class="score-pill">' + a.overall_score + ' / 5</span>' : '—'}</td>
+                    <td style="font-size:13px">${a.maturity_stage || '—'}</td>
+                    <td style="font-size:13px">${new Date(a.created_at).toLocaleDateString()}</td>
+                    <td style="text-align:right">
+                        <div class="actions">
+                            ${a.status === 'completed' ? '<button class="btn-view report-btn">Report</button>' : ''}
+                            <button class="btn-edit edit-btn">Edit</button>
+                            <button class="btn-delete delete-btn">Delete</button>
+                        </div>
+                    </td>
+                `;
+
+                if (a.status === 'completed') {
+                    row.querySelector('.report-btn').addEventListener('click', () => viewReport(assessmentId));
                 }
+                row.querySelector('.edit-btn').addEventListener('click', () => openEditModal(assessmentId, clientName, clientEmail, orgName, industry));
+                row.querySelector('.delete-btn').addEventListener('click', () => openDeleteModal(assessmentId));
 
-                function closeEditModal() {
-                    document.getElementById("edit-modal").classList.remove("active");
-                }
+                tbody.appendChild(row);
+            });
 
-                async function saveEdit() {
-                    const id = document.getElementById("edit-assessment-id").value;
-                    const res = await fetch(`/dashboard/assessment/${id}`, {
-                        method: "PUT",
-                        headers: getHeaders(true),
-                        body: JSON.stringify({
-                            client_name: document.getElementById("edit-client-name").value,
-                            client_email: document.getElementById("edit-client-email").value,
-                            org_name: document.getElementById("edit-org-name").value,
-                            industry: document.getElementById("edit-industry").value,
-                        })
-                    });
-                    if (res.ok) {
-                        showToast("Assessment updated successfully");
-                        closeEditModal();
-                        loadAssessments();
-                    } else {
-                        showToast("Failed to update assessment", true);
-                    }
-                }
+        } catch(e) {
+            console.error("loadAssessments error:", e);
+            showToast("Failed to load assessments", "error");
+        }
+    }
 
-                // ── Delete Assessment ─────────────────────────────────────
-                function openDeleteModal(id) {
-                    document.getElementById("delete-assessment-id").value = id;
-                    document.getElementById("delete-modal").classList.add("active");
-                }
+    // ── Create Modal ──────────────────────────────────────────
+    document.getElementById("create-btn").addEventListener("click", () => {
+        document.getElementById("create-modal").classList.add("active");
+        document.getElementById("link-result").style.display = "none";
+        document.getElementById("btn-create").style.display = "block";
+        document.getElementById("btn-create").textContent = "Generate Link →";
+        document.getElementById("btn-create").disabled = false;
+        ["client-name","client-email","org-name"].forEach(id => document.getElementById(id).value = "");
+        document.getElementById("industry").value = "";
+    });
 
-                function closeDeleteModal() {
-                    document.getElementById("delete-modal").classList.remove("active");
-                }
+    document.getElementById("cancel-create-btn").addEventListener("click", () => {
+        document.getElementById("create-modal").classList.remove("active");
+        loadAssessments();
+    });
 
-                async function confirmDelete() {
-                    const id = document.getElementById("delete-assessment-id").value;
-                    const res = await fetch(`/dashboard/assessment/${id}`, {
-                        method: "DELETE",
-                        headers: getHeaders()
-                    });
-                    if (res.ok) {
-                        showToast("Assessment deleted");
-                        closeDeleteModal();
-                        loadAssessments();
-                    } else {
-                        showToast("Failed to delete assessment", true);
-                    }
-                }
+    document.getElementById("btn-create").addEventListener("click", async () => {
+        const clientName = document.getElementById("client-name").value.trim();
+        const clientEmail = document.getElementById("client-email").value.trim();
+        const orgName = document.getElementById("org-name").value.trim();
+        const industry = document.getElementById("industry").value;
 
-                function handleCopy() {
-          const link = document.getElementById("generated-link").textContent;
-          const btn = document.getElementById("copy-btn");
+        if (!clientName || !clientEmail || !orgName) {
+            alert("Please fill in all required fields.");
+            return;
+        }
 
-          try {
-              const el = document.createElement("textarea");
-              el.value = link;
-              el.style.position = "fixed";
-              el.style.opacity = "0";
-              document.body.appendChild(el);
-              el.focus();
-              el.select();
-              document.execCommand("copy");
-              document.body.removeChild(el);
-              btn.textContent = "Copied!";
-              setTimeout(() => btn.textContent = "Copy", 2000);
-          } catch(e) {
-              window.prompt("Copy this link:", link);
-          }
-      }
-                // ── View Report ───────────────────────────────────────────
-                async function viewReport(id) {
-                    document.getElementById("report-modal").classList.add("active");
-                    document.getElementById("report-body").textContent = "Loading report...";
+        const btn = document.getElementById("btn-create");
+        btn.textContent = "Generating...";
+        btn.disabled = true;
 
-                    const res = await fetch(`/dashboard/report/${id}`, { headers: getHeaders() });
-                    if (!res.ok) { document.getElementById("report-body").textContent = "Report not available yet."; return; }
+        try {
+            const res = await fetch("/assessment/create", {
+                method: "POST",
+                headers: getHeaders(true),
+                body: JSON.stringify({ client_name: clientName, client_email: clientEmail, org_name: orgName, industry })
+            });
 
-                    const data = await res.json();
-                    document.getElementById("report-org-name").textContent = data.org_name;
-                    document.getElementById("report-client-name").textContent = data.client_name;
-                    document.getElementById("report-score").textContent = data.overall_score + " / 5";
-                    document.getElementById("report-maturity").textContent = data.maturity_stage;
-                    document.getElementById("report-risk").textContent = data.risk_band;
-                    document.getElementById("report-body").textContent = data.narrative;
-                }
+            if (!res.ok) {
+                const err = await res.json();
+                alert("Error: " + (err.detail || "Failed to create link"));
+                btn.textContent = "Generate Link →";
+                btn.disabled = false;
+                return;
+            }
 
-                function closeReportModal() {
-                    document.getElementById("report-modal").classList.remove("active");
-                }
+            const data = await res.json();
+            const link = window.location.origin + "/assess/" + data.token;
+            document.getElementById("generated-link").textContent = link;
+            document.getElementById("link-result").style.display = "block";
+            btn.style.display = "none";
 
-                // ── Logout ────────────────────────────────────────────────
-                function logout() {
-                    localStorage.removeItem("token");
-                    window.location.href = "/login";
-                }
+        } catch(e) {
+            alert("Network error: " + e.message);
+            btn.textContent = "Generate Link →";
+            btn.disabled = false;
+        }
+    });
 
-                loadAssessments();
-    </script>
+    // ── Copy Link ─────────────────────────────────────────────
+    document.getElementById("copy-btn").addEventListener("click", () => {
+        const link = document.getElementById("generated-link").textContent;
+        const btn = document.getElementById("copy-btn");
+        try {
+            const el = document.createElement("textarea");
+            el.value = link;
+            el.style.position = "fixed";
+            el.style.opacity = "0";
+            document.body.appendChild(el);
+            el.focus();
+            el.select();
+            document.execCommand("copy");
+            document.body.removeChild(el);
+            btn.textContent = "Copied!";
+            setTimeout(() => btn.textContent = "Copy", 2000);
+        } catch(e) {
+            window.prompt("Copy this link (Ctrl+C):", link);
+        }
+    });
 
-  </body>
+    // ── Edit Modal ────────────────────────────────────────────
+    function openEditModal(id, name, email, org, industry) {
+        document.getElementById("edit-assessment-id").value = id;
+        document.getElementById("edit-client-name").value = name;
+        document.getElementById("edit-client-email").value = email;
+        document.getElementById("edit-org-name").value = org;
+        document.getElementById("edit-industry").value = industry;
+        document.getElementById("edit-modal").classList.add("active");
+    }
+
+    document.getElementById("cancel-edit-btn").addEventListener("click", () => {
+        document.getElementById("edit-modal").classList.remove("active");
+    });
+
+    document.getElementById("save-edit-btn").addEventListener("click", async () => {
+        const id = document.getElementById("edit-assessment-id").value;
+        const res = await fetch(`/dashboard/assessment/${id}`, {
+            method: "PUT",
+            headers: getHeaders(true),
+            body: JSON.stringify({
+                client_name: document.getElementById("edit-client-name").value,
+                client_email: document.getElementById("edit-client-email").value,
+                org_name: document.getElementById("edit-org-name").value,
+                industry: document.getElementById("edit-industry").value,
+            })
+        });
+        if (res.ok) {
+            showToast("Assessment updated successfully ✅", "success");
+            document.getElementById("edit-modal").classList.remove("active");
+            loadAssessments();
+        } else {
+            showToast("Failed to update assessment", "error");
+        }
+    });
+
+    // ── Delete Modal ──────────────────────────────────────────
+    function openDeleteModal(id) {
+        document.getElementById("delete-assessment-id").value = id;
+        document.getElementById("delete-modal").classList.add("active");
+    }
+
+    document.getElementById("cancel-delete-btn").addEventListener("click", () => {
+        document.getElementById("delete-modal").classList.remove("active");
+    });
+
+    document.getElementById("confirm-delete-btn").addEventListener("click", async () => {
+        const id = document.getElementById("delete-assessment-id").value;
+        const res = await fetch(`/dashboard/assessment/${id}`, {
+            method: "DELETE",
+            headers: getHeaders()
+        });
+        if (res.ok) {
+            showToast("Assessment deleted ✅", "success");
+            document.getElementById("delete-modal").classList.remove("active");
+            loadAssessments();
+        } else {
+            showToast("Failed to delete assessment", "error");
+        }
+    });
+
+    // ── Report Modal ──────────────────────────────────────────
+    async function viewReport(id) {
+        document.getElementById("report-modal").classList.add("active");
+        document.getElementById("report-body").textContent = "Loading report analysis...";
+
+        const res = await fetch(`/dashboard/report/${id}`, { headers: getHeaders() });
+        if (!res.ok) {
+            document.getElementById("report-body").textContent = "Report not available yet.";
+            return;
+        }
+
+        const data = await res.json();
+        document.getElementById("report-org-name").textContent = data.org_name;
+        document.getElementById("report-client-name").textContent = data.client_name;
+        document.getElementById("report-score").textContent = data.overall_score + " / 5";
+        document.getElementById("report-maturity").textContent = data.maturity_stage;
+        document.getElementById("report-risk").textContent = data.risk_band;
+        document.getElementById("report-body").textContent = data.narrative;
+    }
+
+    document.getElementById("close-report-btn").addEventListener("click", () => {
+        document.getElementById("report-modal").classList.remove("active");
+    });
+
+    document.getElementById("print-btn").addEventListener("click", () => window.print());
+
+    // ── Coming Soon Modal ─────────────────────────────────────
+    document.getElementById("close-coming-soon-btn").addEventListener("click", () => {
+        document.getElementById("coming-soon-modal").classList.remove("active");
+    });
+
+    // ── Logout ────────────────────────────────────────────────
+    function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+    }
+
+    // ── Init ──────────────────────────────────────────────────
+    loadAssessments();
+</script>
+</body>
 </html>
