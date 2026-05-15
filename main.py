@@ -186,8 +186,7 @@ def get_report(token: str, db: Session = Depends(get_db)):
 
 @app.get("/login")
 def login_page(request: Request):
-    # Instead of returning the template, redirect to the dashboard
-    return RedirectResponse(url="/dashboard")
+    return templates.TemplateResponse(request=request, name="login.html", context={})
 
 @app.post("/auth/login")
 def login(data: LoginData):
