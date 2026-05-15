@@ -1,604 +1,873 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CereViva — Survey Editor</title>
-    <style>
-        :root {
-            --brand-orange: #FF670A;
-            --brand-beige: #F5F1EA;
-            --light-orange: #FFBE58;
-            --white: #FFFFFF;
-            --black: #1a1a1a;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--brand-beige); color: var(--black); min-height: 100vh; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CereViva — Survey Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --orange: #E8601C;
+    --orange-dark: #C44E12;
+    --orange-light: #FFF0E8;
+    --cream: #F5F0EB;
+    --white: #FFFFFF;
+    --gray-100: #F7F7F5;
+    --gray-200: #EDEAE6;
+    --gray-400: #B0A99F;
+    --gray-600: #7A726A;
+    --gray-800: #3D3730;
+    --text: #2A2420;
+    --danger: #D94040;
+    --danger-light: #FDEAEA;
+    --success: #2A7A4B;
+    --success-light: #E6F5ED;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
 
-        .navbar { background: var(--brand-orange); padding: 12px 32px; display: flex; justify-content: space-between; align-items: center; }
-        .nav-left { display: flex; align-items: center; gap: 15px; }
-        .logo-img { height: 45px; background: white; padding: 5px; border-radius: 6px; }
-        .navbar-brand { color: white; font-size: 20px; font-weight: 800; }
-        .navbar-subtitle { color: rgba(255,255,255,0.85); font-size: 12px; }
-        .btn-nav { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; text-decoration: none; display: inline-block; }
-        .btn-nav:hover { background: rgba(255,255,255,0.3); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
 
-        /* Two panel layout */
-        .editor-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
+  /* ── HEADER ── */
+  .header {
+    background: var(--orange);
+    padding: 0 32px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 12px rgba(232,96,28,0.3);
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .header-logo {
+    width: 44px; height: 44px;
+    background: rgba(255,255,255,0.2);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    color: white; font-size: 18px; font-weight: 700;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .header-title { color: white; }
+  .header-title h1 { font-size: 20px; font-weight: 700; line-height: 1.1; }
+  .header-title p { font-size: 12px; opacity: 0.8; }
+  .btn-back {
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.4);
+    color: white;
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-back:hover { background: rgba(255,255,255,0.25); }
 
-        /* Forms Panel */
-        .panel { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); overflow: hidden; }
-        .panel-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .panel-header h3 { font-size: 16px; font-weight: 800; }
-        .panel-body { padding: 16px; }
+  /* ── MAIN LAYOUT ── */
+  .main { padding: 32px; max-width: 1200px; margin: 0 auto; }
 
-        .form-item { padding: 12px; border-radius: 10px; border: 2px solid #eee; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
-        .form-item:hover { border-color: var(--brand-orange); }
-        .form-item.active { border-color: var(--brand-orange); background: #fff5f0; }
-        .form-item-name { font-weight: 700; font-size: 14px; }
-        .form-item-meta { font-size: 12px; color: #888; margin-top: 3px; }
-        .active-badge { background: var(--brand-orange); color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; margin-left: 6px; }
+  .page-header { margin-bottom: 28px; }
+  .page-header h2 { font-family: 'DM Serif Display', serif; font-size: 30px; font-weight: 400; color: var(--text); }
+  .page-header p { color: var(--gray-600); font-size: 15px; margin-top: 4px; }
 
-        /* Question Panel */
-        .question-panel-header { padding: 20px; border-bottom: 1px solid #eee; }
-        .question-panel-header h3 { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
-        .question-panel-header p { font-size: 13px; color: #888; }
+  .layout { display: grid; grid-template-columns: 340px 1fr; gap: 24px; align-items: start; }
 
-        .questions-list { padding: 16px; max-height: 600px; overflow-y: auto; }
-        .question-item { padding: 14px; border: 2px solid #eee; border-radius: 10px; margin-bottom: 10px; }
-        .question-item:hover { border-color: #ddd; }
-        .question-item-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-        .question-text { font-size: 14px; color: #333; flex: 1; line-height: 1.5; }
-        .question-dimension { font-size: 11px; color: var(--brand-orange); font-weight: 700; margin-top: 4px; }
-        .question-type-badge { font-size: 11px; background: #f0f0f0; color: #666; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
-        .question-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  /* ── PANELS ── */
+  .panel {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+  }
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .panel-header h3 { font-size: 16px; font-weight: 700; }
 
-        .btn-sm { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
-        .btn-edit-q { background: #fff8e7; color: #b37400; }
-        .btn-delete-q { background: #ffebee; color: #c62828; }
-        .btn-toggle-q { background: #e8f5e9; color: #2e7d32; }
-        .btn-toggle-q.inactive { background: #f5f5f5; color: #999; }
+  /* ── BUTTONS ── */
+  .btn {
+    padding: 9px 16px; border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.18s; border: none; display: inline-flex;
+    align-items: center; gap: 6px;
+  }
+  .btn-primary { background: var(--orange); color: white; }
+  .btn-primary:hover { background: var(--orange-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(232,96,28,0.3); }
+  .btn-ghost { background: transparent; color: var(--gray-600); border: 1.5px solid var(--gray-200); }
+  .btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+  .btn-danger { background: var(--danger-light); color: var(--danger); border: 1.5px solid transparent; }
+  .btn-danger:hover { background: var(--danger); color: white; }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
+  .btn-icon { width: 32px; height: 32px; padding: 0; justify-content: center; border-radius: 6px; }
 
-        .empty-questions { text-align: center; padding: 40px; color: #999; }
+  /* ── FORMS LIST ── */
+  .forms-list { padding: 12px; display: flex; flex-direction: column; gap: 6px; min-height: 180px; }
 
-        /* Buttons */
-        .btn-primary { background: var(--brand-orange); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
-        .btn-primary:hover { background: #e55a00; }
-        .btn-secondary { background: #f0f0f0; color: #333; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-        .btn-danger { background: #ffebee; color: #c62828; border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
-        .btn-success { background: #e8f5e9; color: #2e7d32; border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .form-item {
+    padding: 14px 16px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-200); cursor: pointer;
+    transition: all 0.18s; display: flex; flex-direction: column; gap: 6px;
+    background: var(--white);
+  }
+  .form-item:hover { border-color: var(--orange); box-shadow: var(--shadow-sm); }
+  .form-item.active { border-color: var(--orange); background: var(--orange-light); }
 
-        /* Modals */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: white; border-radius: 16px; padding: 32px; max-width: 500px; width: 100%; margin: 20px; max-height: 90vh; overflow-y: auto; }
-        .modal h3 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
-        .modal p { font-size: 14px; color: #666; margin-bottom: 20px; }
-        .field { margin-bottom: 16px; }
-        label { display: block; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 6px; }
-        input, select, textarea { width: 100%; border: 2px solid #e8e8e8; border-radius: 10px; padding: 10px 14px; font-size: 14px; color: #333; outline: none; font-family: inherit; }
-        textarea { resize: vertical; min-height: 80px; }
-        input:focus, select:focus, textarea:focus { border-color: var(--brand-orange); }
-        .modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
-        .btn-cancel { flex: 1; background: #f0f0f0; color: #333; border: none; padding: 12px; border-radius: 10px; font-size: 15px; cursor: pointer; }
-        .btn-create { flex: 2; background: var(--brand-orange); color: white; border: none; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
-        .btn-del { flex: 2; background: #c62828; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .form-item-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .form-item-name { font-weight: 600; font-size: 14px; color: var(--text); flex: 1; }
+  .form-item-meta { font-size: 12px; color: var(--gray-600); display: flex; gap: 10px; align-items: center; }
+  .form-item-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
+  .form-item:hover .form-item-actions { opacity: 1; }
 
-        /* Dimensions list for new question */
-        .dimension-hint { font-size: 11px; color: #888; margin-top: 4px; }
+  .badge {
+    font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .badge-active { background: var(--success-light); color: var(--success); }
+  .badge-inactive { background: var(--gray-200); color: var(--gray-600); }
 
-        /* Toast */
-        .toast { position: fixed; bottom: 24px; right: 24px; background: #333; color: white; padding: 12px 20px; border-radius: 10px; font-size: 14px; display: none; z-index: 999; }
-        .toast.show { display: block; }
-        .toast.error { background: #c62828; }
-        .toast.success { background: #2e7d32; }
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; padding: 48px 20px; color: var(--gray-400);
+    text-align: center;
+  }
+  .empty-state svg { opacity: 0.4; }
+  .empty-state p { font-size: 14px; }
 
-        .form-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  /* ── QUESTION EDITOR PANEL ── */
+  .editor-empty {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 14px; padding: 80px 40px;
+    text-align: center; color: var(--gray-400);
+  }
+  .editor-empty .icon { font-size: 52px; opacity: 0.35; }
+  .editor-empty h3 { font-size: 18px; font-weight: 600; color: var(--gray-600); }
+  .editor-empty p { font-size: 14px; }
 
-        .stats-bar { display: flex; gap: 16px; padding: 12px 20px; background: #fff5f0; border-bottom: 1px solid #ffe0cc; }
-        .stat-item { font-size: 13px; color: #666; }
-        .stat-item strong { color: var(--brand-orange); }
+  /* ── FORM DETAIL VIEW ── */
+  .form-detail-header {
+    padding: 20px 24px; border-bottom: 1px solid var(--gray-200);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .form-detail-meta { flex: 1; }
+  .form-detail-meta h3 { font-size: 18px; font-weight: 700; }
+  .form-detail-meta p { font-size: 13px; color: var(--gray-600); margin-top: 3px; }
+  .form-detail-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
-        .no-form-selected { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 400px; color: #999; text-align: center; }
-        .no-form-selected .icon { font-size: 48px; margin-bottom: 16px; }
-    </style>
+  /* ── QUESTIONS ── */
+  .questions-list { padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+
+  .question-card {
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+    padding: 16px; background: var(--gray-100); transition: border-color 0.18s;
+    cursor: grab;
+  }
+  .question-card:hover { border-color: var(--orange); }
+  .question-card.dragging { opacity: 0.5; cursor: grabbing; }
+
+  .question-card-top { display: flex; align-items: flex-start; gap: 12px; }
+  .drag-handle { color: var(--gray-400); font-size: 16px; cursor: grab; padding-top: 2px; user-select: none; }
+  .question-info { flex: 1; }
+  .question-text { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.45; }
+  .question-tags { display: flex; gap: 6px; margin-top: 7px; flex-wrap: wrap; }
+  .tag {
+    font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500;
+    background: var(--gray-200); color: var(--gray-600);
+  }
+  .tag-dim { background: var(--orange-light); color: var(--orange-dark); }
+  .question-card-actions { display: flex; gap: 4px; align-items: flex-start; }
+
+  /* ── ADD QUESTION BAR ── */
+  .add-question-bar {
+    padding: 16px 20px; border-top: 1px solid var(--gray-200);
+    background: var(--gray-100);
+  }
+  .add-question-bar h4 { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--gray-800); }
+  .add-form-grid { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: end; }
+  .add-form-full { grid-column: 1 / -1; }
+
+  .field-label { font-size: 12px; font-weight: 600; color: var(--gray-600); margin-bottom: 5px; }
+  .field-input, .field-select {
+    width: 100%; padding: 9px 12px; border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px;
+    background: var(--white); color: var(--text); transition: border-color 0.18s;
+    outline: none;
+  }
+  .field-input:focus, .field-select:focus { border-color: var(--orange); }
+  textarea.field-input { resize: vertical; min-height: 72px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(42,36,32,0.55);
+    display: none; align-items: center; justify-content: center; z-index: 1000;
+    backdrop-filter: blur(3px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: var(--radius); width: 480px;
+    max-width: 95vw; box-shadow: var(--shadow-lg); animation: slideUp 0.2s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-header { padding: 22px 24px 16px; border-bottom: 1px solid var(--gray-200); }
+  .modal-header h3 { font-size: 18px; font-weight: 700; }
+  .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 8px; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 2000;
+    padding: 13px 20px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500; box-shadow: var(--shadow-md);
+    transform: translateY(80px); opacity: 0; transition: all 0.3s;
+    max-width: 320px;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.success { background: var(--success); color: white; }
+  #toast.error { background: var(--danger); color: white; }
+  #toast.info { background: var(--gray-800); color: white; }
+
+  /* ── SPINNER ── */
+  .spinner {
+    width: 32px; height: 32px; border: 3px solid var(--gray-200);
+    border-top-color: var(--orange); border-radius: 50%;
+    animation: spin 0.7s linear infinite; margin: 0 auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-row { padding: 40px 20px; text-align: center; color: var(--gray-400); }
+
+  .toggle-wrap { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+  .toggle {
+    position: relative; width: 42px; height: 24px;
+    background: var(--gray-200); border-radius: 12px; cursor: pointer;
+    transition: background 0.2s; flex-shrink: 0;
+  }
+  .toggle.on { background: var(--orange); }
+  .toggle::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 18px; height: 18px; border-radius: 50%; background: white;
+    transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { transform: translateX(18px); }
+
+  .divider { height: 1px; background: var(--gray-200); margin: 4px 0; }
+
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+    .main { padding: 16px; }
+  }
+</style>
 </head>
 <body>
 
-<div class="navbar">
-    <div class="nav-left">
-        <img src="https://ceravive.digitalblocs.com/wp-content/uploads/2026/05/logo-1-2.png" alt="CereViva Logo" class="logo-img">
-        <div>
-            <div class="navbar-brand">CereViva</div>
-            <div class="navbar-subtitle">Survey Editor</div>
-        </div>
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">CV</div>
+    <div class="header-title">
+      <h1>CereViva</h1>
+      <p>Survey Editor</p>
     </div>
-    <a href="/dashboard?token={{ wp_token }}" class="btn-nav">← Back to Dashboard</a>
+  </div>
+  <a href="/dashboard?token={{ wp_token }}" class="btn-back">
+    ← Back to Dashboard
+  </a>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="page-header">
+    <h2>Survey Forms</h2>
+    <p>Create and manage your NeuroSafety assessment forms</p>
+  </div>
+
+  <div class="layout">
+
+    <!-- LEFT: Forms List -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Your Forms</h3>
+        <button class="btn btn-primary btn-sm" id="newFormBtn">+ New Form</button>
+      </div>
+      <div class="forms-list" id="formsList">
+        <div class="loading-row"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Question Editor -->
+    <div class="panel" id="editorPanel">
+      <div class="editor-empty" id="editorEmpty">
+        <div class="icon">📋</div>
+        <h3>Select a form to edit</h3>
+        <p>Choose a form from the left panel<br>to view and manage its questions</p>
+      </div>
+      <div id="editorContent" style="display:none">
+        <!-- injected by JS -->
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- MODAL: New / Edit Form -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="formModalTitle">New Form</h3>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="field-label">Form Name *</div>
+        <input type="text" class="field-input" id="formName" placeholder="e.g. NeuroSafety Q2 2026" />
+      </div>
+      <div>
+        <div class="field-label">Description</div>
+        <textarea class="field-input" id="formDesc" placeholder="Optional description..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="formModalCancel">Cancel</button>
+      <button class="btn btn-primary" id="formModalSave">Save Form</button>
+    </div>
+  </div>
 </div>
 
-<div class="container">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-        <div>
-            <h2 style="font-size:24px;font-weight:800">Survey Forms</h2>
-            <p style="color:#888;font-size:14px;margin-top:4px">Create and manage your NeuroSafety assessment forms</p>
-        </div>
+<!-- MODAL: Edit Question -->
+<div class="modal-overlay" id="questionModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Edit Question</h3>
     </div>
-
-    <div class="editor-layout">
-        <!-- Forms List Panel -->
-        <div class="panel">
-            <div class="panel-header">
-                <h3>Your Forms</h3>
-                <button class="btn-primary" id="new-form-btn" style="padding:8px 14px;font-size:13px">+ New Form</button>
-            </div>
-            <div class="panel-body" id="forms-list">
-                <div style="text-align:center;padding:30px;color:#999">Loading forms...</div>
-            </div>
-        </div>
-
-        <!-- Questions Panel -->
-        <div class="panel" id="questions-panel">
-            <div class="no-form-selected">
-                <div class="icon">📋</div>
-                <p style="font-size:16px;font-weight:700;color:#333;margin-bottom:8px">Select a form to edit</p>
-                <p>Choose a form from the left panel to view and manage its questions</p>
-            </div>
-        </div>
+    <div class="modal-body">
+      <div>
+        <div class="field-label">Question Text *</div>
+        <textarea class="field-input" id="editQText" rows="3"></textarea>
+      </div>
+      <div>
+        <div class="field-label">Dimension *</div>
+        <select class="field-select" id="editQDim">
+          <option value="">Select dimension...</option>
+        </select>
+      </div>
+      <div>
+        <div class="field-label">Question Type</div>
+        <select class="field-select" id="editQType">
+          <option value="scale">Scale (1–5)</option>
+          <option value="text">Free Text</option>
+          <option value="yesno">Yes / No</option>
+        </select>
+      </div>
     </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="questionModalCancel">Cancel</button>
+      <button class="btn btn-primary" id="questionModalSave">Save Question</button>
+    </div>
+  </div>
 </div>
 
-<!-- New Form Modal -->
-<div class="modal-overlay" id="new-form-modal">
-    <div class="modal">
-        <h3>Create New Form</h3>
-        <p>Give your new survey form a name and description.</p>
-        <div class="field"><label>Form Name *</label><input type="text" id="new-form-name" placeholder="e.g. CereViva NeuroSafety v2" /></div>
-        <div class="field"><label>Description</label><textarea id="new-form-desc" placeholder="Brief description of this form..."></textarea></div>
-        <div class="modal-buttons">
-            <button class="btn-cancel" id="cancel-new-form">Cancel</button>
-            <button class="btn-create" id="save-new-form">Create Form</button>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Form Modal -->
-<div class="modal-overlay" id="edit-form-modal">
-    <div class="modal">
-        <h3>Edit Form Details</h3>
-        <p>Update the form name and description.</p>
-        <input type="hidden" id="edit-form-id" />
-        <div class="field"><label>Form Name *</label><input type="text" id="edit-form-name" /></div>
-        <div class="field"><label>Description</label><textarea id="edit-form-desc"></textarea></div>
-        <div class="modal-buttons">
-            <button class="btn-cancel" id="cancel-edit-form">Cancel</button>
-            <button class="btn-create" id="save-edit-form">Save Changes</button>
-        </div>
-    </div>
-</div>
-
-<!-- Add Question Modal -->
-<div class="modal-overlay" id="add-question-modal">
-    <div class="modal">
-        <h3>Add Question</h3>
-        <p>Add a new question to this survey form.</p>
-        <input type="hidden" id="add-q-form-id" />
-        <div class="field">
-            <label>Question Text *</label>
-            <textarea id="add-q-text" placeholder="Enter the question text..."></textarea>
-        </div>
-        <div class="field">
-            <label>Dimension *</label>
-            <select id="add-q-dimension">
-                <option value="">Select dimension...</option>
-                <option>Cognitive Load & Clarity</option>
-                <option>Learning & Memory Support</option>
-                <option>Attention & Focus Design</option>
-                <option>Fear / Reward Balance</option>
-                <option>Decision-Making Under Pressure</option>
-                <option>Leadership & Culture</option>
-                <option>Habit Formation & Consistency</option>
-                <option>Team Synchrony & Support</option>
-                <option>Training & Facilitation Quality</option>
-                <option>System Feedback Loops</option>
-                <option>Open Text</option>
-                <option>Custom</option>
-            </select>
-        </div>
-        <div class="field" id="custom-dimension-field" style="display:none">
-            <label>Custom Dimension Name</label>
-            <input type="text" id="add-q-custom-dimension" placeholder="Enter dimension name..." />
-        </div>
-        <div class="field">
-            <label>Question Type</label>
-            <select id="add-q-type">
-                <option value="scale">Scale (1-5 rating)</option>
-                <option value="open_text">Open Text</option>
-            </select>
-        </div>
-        <div class="modal-buttons">
-            <button class="btn-cancel" id="cancel-add-q">Cancel</button>
-            <button class="btn-create" id="save-add-q">Add Question</button>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Question Modal -->
-<div class="modal-overlay" id="edit-question-modal">
-    <div class="modal">
-        <h3>Edit Question</h3>
-        <p>Update the question text and settings.</p>
-        <input type="hidden" id="edit-q-id" />
-        <div class="field">
-            <label>Question Text *</label>
-            <textarea id="edit-q-text"></textarea>
-        </div>
-        <div class="field">
-            <label>Dimension *</label>
-            <select id="edit-q-dimension">
-                <option value="">Select dimension...</option>
-                <option>Cognitive Load & Clarity</option>
-                <option>Learning & Memory Support</option>
-                <option>Attention & Focus Design</option>
-                <option>Fear / Reward Balance</option>
-                <option>Decision-Making Under Pressure</option>
-                <option>Leadership & Culture</option>
-                <option>Habit Formation & Consistency</option>
-                <option>Team Synchrony & Support</option>
-                <option>Training & Facilitation Quality</option>
-                <option>System Feedback Loops</option>
-                <option>Open Text</option>
-            </select>
-        </div>
-        <div class="field">
-            <label>Question Type</label>
-            <select id="edit-q-type">
-                <option value="scale">Scale (1-5 rating)</option>
-                <option value="open_text">Open Text</option>
-            </select>
-        </div>
-        <div class="modal-buttons">
-            <button class="btn-cancel" id="cancel-edit-q">Cancel</button>
-            <button class="btn-create" id="save-edit-q">Save Changes</button>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Question Confirm -->
-<div class="modal-overlay" id="delete-question-modal">
-    <div class="modal">
-        <h3>Delete Question</h3>
-        <p>Are you sure you want to delete this question? This cannot be undone.</p>
-        <input type="hidden" id="delete-q-id" />
-        <div class="modal-buttons">
-            <button class="btn-cancel" id="cancel-delete-q">Cancel</button>
-            <button class="btn-del" id="confirm-delete-q">Delete</button>
-        </div>
-    </div>
-</div>
-
-<div class="toast" id="toast"></div>
+<!-- TOAST -->
+<div id="toast"></div>
 
 <script>
-    const skipAuth = {{ skip_auth | tojson }};
-    const wpToken = "{{ wp_token or '' }}";
-    const jwtToken = localStorage.getItem("token");
+// ── CONFIG ──────────────────────────────────────────────────────────────
+// NOTE: Jinja2 variables are captured ONCE into plain JS variables here.
+// Never use {{ }} inside JS template literals — it causes SyntaxError.
+var WP_TOKEN = "{{ wp_token }}";
+var SKIP_AUTH = {{ 'true' if skip_auth else 'false' }};
 
-    function getHeaders(includeContent = false) {
-        const headers = {};
-        if (includeContent) headers["Content-Type"] = "application/json";
-        if (skipAuth && wpToken && wpToken !== 'None' && wpToken !== '') {
-            headers["X-WP-Token"] = wpToken;
-        } else if (jwtToken) {
-            headers["Authorization"] = "Bearer " + jwtToken;
-        }
-        return headers;
+var BASE_URL = "";  // same origin
+
+var DIMENSIONS = [
+  "Leadership & Governance",
+  "Risk Assessment",
+  "Incident Response",
+  "Training & Culture",
+  "Technology & Tools",
+  "Compliance & Legal",
+  "Communication",
+  "Wellbeing & Support"
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────
+var forms = [];
+var activeForms = null;
+var activeFormId = null;
+var activeFormQuestions = [];
+var editingQuestionId = null;
+var editingFormId = null;  // for form modal (edit mode)
+var dragSrcIndex = null;
+
+// ── UTILS ─────────────────────────────────────────────────────────────────
+function getHeaders(includeContent) {
+  var h = {};
+  if (includeContent) h["Content-Type"] = "application/json";
+  if (SKIP_AUTH && WP_TOKEN && WP_TOKEN !== "None" && WP_TOKEN !== "") {
+    h["X-WP-Token"] = WP_TOKEN;
+  }
+  return h;
+}
+
+function showToast(msg, type) {
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "show " + (type || "info");
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.className = ""; }, 3200);
+}
+
+function esc(s) {
+  if (!s) return "";
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// ── FORMS LIST ────────────────────────────────────────────────────────────
+function loadForms() {
+  document.getElementById("formsList").innerHTML = '<div class="loading-row"><div class="spinner"></div></div>';
+  fetch(BASE_URL + "/dashboard/survey-forms", { headers: getHeaders(false) })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      forms = data.forms || [];
+      renderFormsList();
+    })
+    .catch(function(e) {
+      console.error(e);
+      document.getElementById("formsList").innerHTML = '<div class="empty-state"><p>Failed to load forms.</p></div>';
+    });
+}
+
+function renderFormsList() {
+  var el = document.getElementById("formsList");
+  if (!forms.length) {
+    el.innerHTML = '<div class="empty-state"><p>No forms yet. Create one!</p></div>';
+    return;
+  }
+  var html = "";
+  for (var i = 0; i < forms.length; i++) {
+    var f = forms[i];
+    var isActive = f.id === activeFormId;
+    var badgeClass = f.is_active ? "badge-active" : "badge-inactive";
+    var badgeText = f.is_active ? "Active" : "Draft";
+    html += '<div class="form-item' + (isActive ? ' active' : '') + '" data-id="' + esc(f.id) + '">'
+      + '<div class="form-item-header">'
+      +   '<span class="form-item-name">' + esc(f.name) + '</span>'
+      +   '<span class="badge ' + badgeClass + '">' + badgeText + '</span>'
+      + '</div>'
+      + '<div class="form-item-meta">'
+      +   '<span>' + (f.question_count || 0) + ' questions</span>'
+      +   '<div class="form-item-actions">'
+      +     '<button class="btn btn-ghost btn-icon btn-sm edit-form-btn" data-id="' + esc(f.id) + '" title="Edit form details">✏️</button>'
+      +     '<button class="btn btn-danger btn-icon btn-sm del-form-btn" data-id="' + esc(f.id) + '" title="Delete form">🗑</button>'
+      +   '</div>'
+      + '</div>'
+      + '</div>';
+  }
+  el.innerHTML = html;
+
+  // click to open
+  el.querySelectorAll(".form-item").forEach(function(item) {
+    item.addEventListener("click", function(e) {
+      if (e.target.closest(".edit-form-btn") || e.target.closest(".del-form-btn")) return;
+      selectForm(item.dataset.id);
+    });
+  });
+  el.querySelectorAll(".edit-form-btn").forEach(function(btn) {
+    btn.addEventListener("click", function(e) { e.stopPropagation(); openEditFormModal(btn.dataset.id); });
+  });
+  el.querySelectorAll(".del-form-btn").forEach(function(btn) {
+    btn.addEventListener("click", function(e) { e.stopPropagation(); deleteForm(btn.dataset.id); });
+  });
+}
+
+// ── SELECT FORM → LOAD QUESTIONS ─────────────────────────────────────────
+function selectForm(formId) {
+  activeFormId = formId;
+  renderFormsList();
+  document.getElementById("editorEmpty").style.display = "none";
+  document.getElementById("editorContent").style.display = "block";
+  document.getElementById("editorContent").innerHTML = '<div class="loading-row"><div class="spinner"></div></div>';
+
+  fetch(BASE_URL + "/dashboard/survey-forms/" + formId + "/questions", { headers: getHeaders(false) })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      activeFormQuestions = data.questions || [];
+      renderEditor(data);
+    })
+    .catch(function(e) {
+      console.error(e);
+      showToast("Failed to load questions", "error");
+    });
+}
+
+// ── RENDER EDITOR ─────────────────────────────────────────────────────────
+function renderEditor(data) {
+  var form = null;
+  for (var i = 0; i < forms.length; i++) {
+    if (forms[i].id === activeFormId) { form = forms[i]; break; }
+  }
+  var formName = data.form_name || (form && form.name) || "Form";
+  var isActive = data.is_active;
+
+  // build dim options for add-question dropdown
+  var dimOptions = "";
+  for (var d = 0; d < DIMENSIONS.length; d++) {
+    dimOptions += '<option value="' + esc(DIMENSIONS[d]) + '">' + esc(DIMENSIONS[d]) + '</option>';
+  }
+
+  // build questions html
+  var qHtml = "";
+  if (!activeFormQuestions.length) {
+    qHtml = '<div class="empty-state" style="padding:40px"><p>No questions yet. Add one below.</p></div>';
+  } else {
+    for (var q = 0; q < activeFormQuestions.length; q++) {
+      var qItem = activeFormQuestions[q];
+      var activeClass = qItem.is_active ? "" : " style='opacity:0.5'";
+      qHtml += '<div class="question-card" draggable="true" data-qid="' + esc(qItem.id) + '" data-idx="' + q + '"' + activeClass + '>'
+        + '<div class="question-card-top">'
+        +   '<span class="drag-handle" title="Drag to reorder">⠿</span>'
+        +   '<div class="question-info">'
+        +     '<div class="question-text">' + esc(qItem.question_text) + '</div>'
+        +     '<div class="question-tags">'
+        +       '<span class="tag tag-dim">' + esc(qItem.dimension) + '</span>'
+        +       '<span class="tag">' + esc(qItem.question_type) + '</span>'
+        +       (qItem.is_active ? '' : '<span class="tag" style="background:#fdeaea;color:#d94040">Hidden</span>')
+        +     '</div>'
+        +   '</div>'
+        +   '<div class="question-card-actions">'
+        +     '<button class="btn btn-ghost btn-icon btn-sm edit-q-btn" data-qid="' + esc(qItem.id) + '" title="Edit">✏️</button>'
+        +     '<button class="btn btn-ghost btn-icon btn-sm toggle-q-btn" data-qid="' + esc(qItem.id) + '" data-active="' + (qItem.is_active ? 'true' : 'false') + '" title="' + (qItem.is_active ? 'Hide' : 'Show') + '">'
+        +       (qItem.is_active ? '👁' : '🙈')
+        +     '</button>'
+        +     '<button class="btn btn-danger btn-icon btn-sm del-q-btn" data-qid="' + esc(qItem.id) + '" title="Delete">🗑</button>'
+        +   '</div>'
+        + '</div>'
+        + '</div>';
     }
+  }
 
-    function showToast(msg, type = '') {
-        const t = document.getElementById("toast");
-        t.textContent = msg;
-        t.className = "toast show" + (type ? " " + type : "");
-        setTimeout(() => t.className = "toast", 3000);
-    }
+  document.getElementById("editorContent").innerHTML =
+    '<div class="form-detail-header">'
+    + '<div class="form-detail-meta">'
+    +   '<h3>' + esc(formName) + '</h3>'
+    +   '<p>' + activeFormQuestions.length + ' question' + (activeFormQuestions.length !== 1 ? 's' : '') + '</p>'
+    + '</div>'
+    + '<div class="form-detail-actions">'
+    +   '<div class="toggle-wrap">'
+    +     '<div class="toggle ' + (isActive ? 'on' : '') + '" id="activeToggle" title="' + (isActive ? 'Deactivate' : 'Set as active form') + '"></div>'
+    +     '<span style="font-size:13px;color:var(--gray-600)">' + (isActive ? 'Active' : 'Inactive') + '</span>'
+    +   '</div>'
+    + '</div>'
+    + '</div>'
+    + '<div class="questions-list" id="questionsList">' + qHtml + '</div>'
+    + '<div class="add-question-bar">'
+    +   '<h4>Add Question</h4>'
+    +   '<div class="add-form-grid">'
+    +     '<div class="add-form-full"><div class="field-label">Question Text</div>'
+    +       '<textarea class="field-input" id="newQText" rows="2" placeholder="Enter your question..."></textarea></div>'
+    +     '<div><div class="field-label">Dimension</div>'
+    +       '<select class="field-select" id="newQDim">' + dimOptions + '</select></div>'
+    +     '<div><div class="field-label">Type</div>'
+    +       '<select class="field-select" id="newQType">'
+    +         '<option value="scale">Scale</option>'
+    +         '<option value="text">Text</option>'
+    +         '<option value="yesno">Yes/No</option>'
+    +       '</select></div>'
+    +     '<div style="display:flex;align-items:flex-end">'
+    +       '<button class="btn btn-primary" id="addQBtn">+ Add</button>'
+    +     '</div>'
+    +   '</div>'
+    + '</div>';
 
-    let currentFormId = null;
+  // bind events
+  document.getElementById("activeToggle").addEventListener("click", function() { toggleFormActive(); });
+  document.getElementById("addQBtn").addEventListener("click", function() { addQuestion(); });
 
-    // ── Load Forms ────────────────────────────────────────────
-    async function loadForms() {
-        const res = await fetch("/dashboard/survey-forms", { headers: getHeaders() });
-        const data = await res.json();
-        const list = document.getElementById("forms-list");
+  // question action buttons
+  document.getElementById("questionsList").querySelectorAll(".edit-q-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() { openEditQuestionModal(btn.dataset.qid); });
+  });
+  document.getElementById("questionsList").querySelectorAll(".del-q-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() { deleteQuestion(btn.dataset.qid); });
+  });
+  document.getElementById("questionsList").querySelectorAll(".toggle-q-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() { toggleQuestion(btn.dataset.qid, btn.dataset.active === "true"); });
+  });
 
-        if (data.forms.length === 0) {
-            list.innerHTML = '<div style="text-align:center;padding:30px;color:#999">No forms yet. Create your first form!</div>';
-            return;
-        }
+  // drag-and-drop reordering
+  initDrag();
+}
 
-        list.innerHTML = '';
-        data.forms.forEach(f => {
-            const div = document.createElement("div");
-            div.className = "form-item" + (currentFormId === f.id ? " active" : "");
-            div.innerHTML = `
-                <div class="form-item-name">
-                    ${f.name}
-                    ${f.is_active ? '<span class="active-badge">ACTIVE</span>' : ''}
-                </div>
-                <div class="form-item-meta">${f.question_count} questions</div>
-                <div class="form-actions">
-                    <button class="btn-sm btn-edit-q edit-form-btn">Edit</button>
-                    ${!f.is_active ? `<button class="btn-sm btn-toggle-q activate-btn">Set Active</button>` : ''}
-                    ${!f.is_active ? `<button class="btn-sm btn-delete-q delete-form-btn">Delete</button>` : ''}
-                </div>
-            `;
-
-            div.addEventListener("click", (e) => {
-                if (e.target.classList.contains("edit-form-btn")) {
-                    openEditFormModal(f.id, f.name, f.description || '');
-                } else if (e.target.classList.contains("activate-btn")) {
-                    activateForm(f.id);
-                } else if (e.target.classList.contains("delete-form-btn")) {
-                    deleteForm(f.id, f.name);
-                } else {
-                    loadFormQuestions(f.id, f.name, f.is_active);
-                }
-            });
-
-            list.appendChild(div);
-        });
-    }
-
-    // ── Load Questions ────────────────────────────────────────
-    async function loadFormQuestions(formId, formName, isActive) {
-        currentFormId = formId;
-        loadForms(); // refresh to show active state
-
-        const panel = document.getElementById("questions-panel");
-        panel.innerHTML = '<div style="padding:20px;color:#999">Loading questions...</div>';
-
-        const res = await fetch(`/dashboard/survey-forms/${formId}/questions`, { headers: getHeaders() });
-        const data = await res.json();
-
-        const activeCount = data.questions.filter(q => q.is_active).length;
-        const totalCount = data.questions.length;
-
-        panel.innerHTML = `
-            <div class="question-panel-header">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start">
-                    <div>
-                        <h3>${formName}</h3>
-                        <p>${activeCount} active questions of ${totalCount} total</p>
-                    </div>
-                    <button class="btn-primary" id="add-q-btn" style="font-size:13px;padding:8px 14px">+ Add Question</button>
-                </div>
-                ${isActive ? '<div style="background:#e8f5e9;color:#2e7d32;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;margin-top:10px">✅ This is the active form — changes will affect new assessments</div>' : '<div style="background:#fff8e7;color:#b37400;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;margin-top:10px">⚠️ This form is not active</div>'}
-            </div>
-            <div class="questions-list" id="questions-list">
-                ${data.questions.length === 0 ? '<div class="empty-questions">No questions yet. Add your first question!</div>' : ''}
-            </div>
-        `;
-
-        document.getElementById("add-q-btn").addEventListener("click", () => {
-            document.getElementById("add-q-form-id").value = formId;
-            document.getElementById("add-q-text").value = "";
-            document.getElementById("add-q-dimension").value = "";
-            document.getElementById("add-q-type").value = "scale";
-            document.getElementById("add-question-modal").classList.add("active");
-        });
-
-        const qList = document.getElementById("questions-list");
-        data.questions.forEach((q, idx) => {
-            const div = document.createElement("div");
-            div.className = "question-item";
-            div.style.opacity = q.is_active ? "1" : "0.5";
-            div.innerHTML = `
-                <div class="question-item-header">
-                    <div style="flex:1">
-                        <div style="font-size:11px;color:#aaa;margin-bottom:4px">#${idx + 1} · <span class="question-type-badge">${q.question_type}</span></div>
-                        <div class="question-text">${q.question_text}</div>
-                        <div class="question-dimension">${q.dimension}</div>
-                    </div>
-                    <div class="question-actions">
-                        <button class="btn-sm btn-edit-q">Edit</button>
-                        <button class="btn-sm btn-toggle-q ${q.is_active ? '' : 'inactive'}">${q.is_active ? 'Hide' : 'Show'}</button>
-                        <button class="btn-sm btn-delete-q">Delete</button>
-                    </div>
-                </div>
-            `;
-
-            div.querySelector('.btn-edit-q').addEventListener('click', () => openEditQuestionModal(q));
-            div.querySelector('.btn-toggle-q').addEventListener('click', () => toggleQuestion(q.id, !q.is_active, formId, formName, isActive));
-            div.querySelector('.btn-delete-q').addEventListener('click', () => {
-                document.getElementById("delete-q-id").value = q.id;
-                document.getElementById("delete-question-modal").classList.add("active");
-            });
-
-            qList.appendChild(div);
-        });
-    }
-
-    // ── Form CRUD ─────────────────────────────────────────────
-    document.getElementById("new-form-btn").addEventListener("click", () => {
-        document.getElementById("new-form-name").value = "";
-        document.getElementById("new-form-desc").value = "";
-        document.getElementById("new-form-modal").classList.add("active");
+// ── DRAG & DROP ───────────────────────────────────────────────────────────
+function initDrag() {
+  var list = document.getElementById("questionsList");
+  if (!list) return;
+  var cards = list.querySelectorAll(".question-card");
+  cards.forEach(function(card) {
+    card.addEventListener("dragstart", function(e) {
+      dragSrcIndex = parseInt(card.dataset.idx);
+      card.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
     });
-
-    document.getElementById("cancel-new-form").addEventListener("click", () => {
-        document.getElementById("new-form-modal").classList.remove("active");
+    card.addEventListener("dragend", function() { card.classList.remove("dragging"); });
+    card.addEventListener("dragover", function(e) { e.preventDefault(); e.dataTransfer.dropEffect = "move"; });
+    card.addEventListener("drop", function(e) {
+      e.preventDefault();
+      var targetIdx = parseInt(card.dataset.idx);
+      if (dragSrcIndex === null || dragSrcIndex === targetIdx) return;
+      var moved = activeFormQuestions.splice(dragSrcIndex, 1)[0];
+      activeFormQuestions.splice(targetIdx, 0, moved);
+      dragSrcIndex = null;
+      saveQuestionOrder();
     });
+  });
+}
 
-    document.getElementById("save-new-form").addEventListener("click", async () => {
-        const name = document.getElementById("new-form-name").value.trim();
-        if (!name) { alert("Please enter a form name."); return; }
+function saveQuestionOrder() {
+  var ids = activeFormQuestions.map(function(q) { return q.id; });
+  fetch(BASE_URL + "/dashboard/survey-forms/" + activeFormId + "/questions/reorder", {
+    method: "POST",
+    headers: getHeaders(true),
+    body: JSON.stringify({ question_ids: ids })
+  })
+  .then(function() { selectForm(activeFormId); })
+  .catch(function(e) { console.error(e); showToast("Reorder failed", "error"); });
+}
 
-        const res = await fetch("/dashboard/survey-forms", {
-            method: "POST", headers: getHeaders(true),
-            body: JSON.stringify({ name, description: document.getElementById("new-form-desc").value })
-        });
-
-        if (res.ok) {
-            showToast("Form created successfully ✅", "success");
-            document.getElementById("new-form-modal").classList.remove("active");
-            loadForms();
-        } else {
-            showToast("Failed to create form", "error");
-        }
-    });
-
-    function openEditFormModal(id, name, desc) {
-        document.getElementById("edit-form-id").value = id;
-        document.getElementById("edit-form-name").value = name;
-        document.getElementById("edit-form-desc").value = desc;
-        document.getElementById("edit-form-modal").classList.add("active");
-    }
-
-    document.getElementById("cancel-edit-form").addEventListener("click", () => {
-        document.getElementById("edit-form-modal").classList.remove("active");
-    });
-
-    document.getElementById("save-edit-form").addEventListener("click", async () => {
-        const id = document.getElementById("edit-form-id").value;
-        const res = await fetch(`/dashboard/survey-forms/${id}`, {
-            method: "PUT", headers: getHeaders(true),
-            body: JSON.stringify({
-                name: document.getElementById("edit-form-name").value,
-                description: document.getElementById("edit-form-desc").value
-            })
-        });
-        if (res.ok) {
-            showToast("Form updated ✅", "success");
-            document.getElementById("edit-form-modal").classList.remove("active");
-            loadForms();
-        } else {
-            showToast("Failed to update form", "error");
-        }
-    });
-
-    async function activateForm(id) {
-        if (!confirm("Set this as the active form? All new assessments will use this form.")) return;
-        const res = await fetch(`/dashboard/survey-forms/${id}`, {
-            method: "PUT", headers: getHeaders(true),
-            body: JSON.stringify({ is_active: true })
-        });
-        if (res.ok) {
-            showToast("Form activated ✅", "success");
-            loadForms();
-        }
-    }
-
-    async function deleteForm(id, name) {
-        if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
-        const res = await fetch(`/dashboard/survey-forms/${id}`, {
-            method: "DELETE", headers: getHeaders()
-        });
-        if (res.ok) {
-            showToast("Form deleted", "success");
-            currentFormId = null;
-            document.getElementById("questions-panel").innerHTML = '<div class="no-form-selected"><div class="icon">📋</div><p style="font-size:16px;font-weight:700;color:#333;margin-bottom:8px">Select a form to edit</p><p>Choose a form from the left panel</p></div>';
-            loadForms();
-        } else {
-            const err = await res.json();
-            showToast(err.detail || "Failed to delete form", "error");
-        }
-    }
-
-    // ── Question CRUD ─────────────────────────────────────────
-    document.getElementById("add-q-dimension").addEventListener("change", function() {
-        document.getElementById("custom-dimension-field").style.display = this.value === "Custom" ? "block" : "none";
-    });
-
-    document.getElementById("cancel-add-q").addEventListener("click", () => {
-        document.getElementById("add-question-modal").classList.remove("active");
-    });
-
-    document.getElementById("save-add-q").addEventListener("click", async () => {
-        const formId = document.getElementById("add-q-form-id").value;
-        const text = document.getElementById("add-q-text").value.trim();
-        let dimension = document.getElementById("add-q-dimension").value;
-        if (dimension === "Custom") dimension = document.getElementById("add-q-custom-dimension").value.trim();
-        const type = document.getElementById("add-q-type").value;
-
-        if (!text || !dimension) { alert("Please fill in all required fields."); return; }
-
-        const res = await fetch(`/dashboard/survey-forms/${formId}/questions`, {
-            method: "POST", headers: getHeaders(true),
-            body: JSON.stringify({ question_text: text, dimension, question_type: type })
-        });
-
-        if (res.ok) {
-            showToast("Question added ✅", "success");
-            document.getElementById("add-question-modal").classList.remove("active");
-            const formName = document.querySelector(".form-item.active .form-item-name")?.textContent?.trim() || "";
-            loadFormQuestions(formId, formName, false);
-        } else {
-            showToast("Failed to add question", "error");
-        }
-    });
-
-    function openEditQuestionModal(q) {
-        document.getElementById("edit-q-id").value = q.id;
-        document.getElementById("edit-q-text").value = q.question_text;
-        document.getElementById("edit-q-dimension").value = q.dimension;
-        document.getElementById("edit-q-type").value = q.question_type;
-        document.getElementById("edit-question-modal").classList.add("active");
-    }
-
-    document.getElementById("cancel-edit-q").addEventListener("click", () => {
-        document.getElementById("edit-question-modal").classList.remove("active");
-    });
-
-    document.getElementById("save-edit-q").addEventListener("click", async () => {
-        const id = document.getElementById("edit-q-id").value;
-        const res = await fetch(`/dashboard/questions/${id}`, {
-            method: "PUT", headers: getHeaders(true),
-            body: JSON.stringify({
-                question_text: document.getElementById("edit-q-text").value,
-                dimension: document.getElementById("edit-q-dimension").value,
-                question_type: document.getElementById("edit-q-type").value,
-            })
-        });
-        if (res.ok) {
-            showToast("Question updated ✅", "success");
-            document.getElementById("edit-question-modal").classList.remove("active");
-            if (currentFormId) loadFormQuestions(currentFormId, "", false);
-        } else {
-            showToast("Failed to update question", "error");
-        }
-    });
-
-    async function toggleQuestion(id, isActive, formId, formName, formIsActive) {
-        const res = await fetch(`/dashboard/questions/${id}`, {
-            method: "PUT", headers: getHeaders(true),
-            body: JSON.stringify({ is_active: isActive })
-        });
-        if (res.ok) {
-            showToast(isActive ? "Question shown ✅" : "Question hidden", "success");
-            loadFormQuestions(formId, formName, formIsActive);
-        }
-    }
-
-    document.getElementById("cancel-delete-q").addEventListener("click", () => {
-        document.getElementById("delete-question-modal").classList.remove("active");
-    });
-
-    document.getElementById("confirm-delete-q").addEventListener("click", async () => {
-        const id = document.getElementById("delete-q-id").value;
-        const res = await fetch(`/dashboard/questions/${id}`, {
-            method: "DELETE", headers: getHeaders()
-        });
-        if (res.ok) {
-            showToast("Question deleted ✅", "success");
-            document.getElementById("delete-question-modal").classList.remove("active");
-            if (currentFormId) loadFormQuestions(currentFormId, "", false);
-        } else {
-            showToast("Failed to delete question", "error");
-        }
-    });
-
-    // ── Init ──────────────────────────────────────────────────
+// ── TOGGLE ACTIVE ─────────────────────────────────────────────────────────
+function toggleFormActive() {
+  var form = null;
+  for (var i = 0; i < forms.length; i++) {
+    if (forms[i].id === activeFormId) { form = forms[i]; break; }
+  }
+  if (!form) return;
+  var newState = !form.is_active;
+  fetch(BASE_URL + "/dashboard/survey-forms/" + activeFormId, {
+    method: "PUT",
+    headers: getHeaders(true),
+    body: JSON.stringify({ is_active: newState })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() {
+    showToast(newState ? "Form set as active" : "Form deactivated", "success");
     loadForms();
+    selectForm(activeFormId);
+  })
+  .catch(function(e) { console.error(e); showToast("Update failed", "error"); });
+}
+
+// ── NEW FORM MODAL ────────────────────────────────────────────────────────
+document.getElementById("newFormBtn").addEventListener("click", function() {
+  editingFormId = null;
+  document.getElementById("formModalTitle").textContent = "New Form";
+  document.getElementById("formName").value = "";
+  document.getElementById("formDesc").value = "";
+  document.getElementById("formModal").classList.add("open");
+  setTimeout(function() { document.getElementById("formName").focus(); }, 50);
+});
+
+document.getElementById("formModalCancel").addEventListener("click", function() {
+  document.getElementById("formModal").classList.remove("open");
+});
+
+document.getElementById("formModalSave").addEventListener("click", function() {
+  var name = document.getElementById("formName").value.trim();
+  var desc = document.getElementById("formDesc").value.trim();
+  if (!name) { showToast("Form name is required", "error"); return; }
+
+  var url = editingFormId
+    ? BASE_URL + "/dashboard/survey-forms/" + editingFormId
+    : BASE_URL + "/dashboard/survey-forms";
+  var method = editingFormId ? "PUT" : "POST";
+
+  fetch(url, {
+    method: method,
+    headers: getHeaders(true),
+    body: JSON.stringify({ name: name, description: desc })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    document.getElementById("formModal").classList.remove("open");
+    showToast(editingFormId ? "Form updated" : "Form created", "success");
+    loadForms();
+    if (!editingFormId && data.id) { setTimeout(function() { selectForm(data.id); }, 400); }
+  })
+  .catch(function(e) { console.error(e); showToast("Save failed", "error"); });
+});
+
+function openEditFormModal(formId) {
+  var form = null;
+  for (var i = 0; i < forms.length; i++) {
+    if (forms[i].id === formId) { form = forms[i]; break; }
+  }
+  if (!form) return;
+  editingFormId = formId;
+  document.getElementById("formModalTitle").textContent = "Edit Form";
+  document.getElementById("formName").value = form.name;
+  document.getElementById("formDesc").value = form.description || "";
+  document.getElementById("formModal").classList.add("open");
+}
+
+// ── DELETE FORM ───────────────────────────────────────────────────────────
+function deleteForm(formId) {
+  var form = null;
+  for (var i = 0; i < forms.length; i++) {
+    if (forms[i].id === formId) { form = forms[i]; break; }
+  }
+  if (form && form.is_active) {
+    showToast("Cannot delete the active form. Deactivate it first.", "error");
+    return;
+  }
+  if (!confirm("Delete this form and all its questions? This cannot be undone.")) return;
+  fetch(BASE_URL + "/dashboard/survey-forms/" + formId, {
+    method: "DELETE",
+    headers: getHeaders(false)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() {
+    showToast("Form deleted", "success");
+    if (activeFormId === formId) {
+      activeFormId = null;
+      document.getElementById("editorEmpty").style.display = "flex";
+      document.getElementById("editorContent").style.display = "none";
+    }
+    loadForms();
+  })
+  .catch(function(e) { console.error(e); showToast("Delete failed", "error"); });
+}
+
+// ── ADD QUESTION ──────────────────────────────────────────────────────────
+function addQuestion() {
+  var text = document.getElementById("newQText").value.trim();
+  var dim = document.getElementById("newQDim").value;
+  var type = document.getElementById("newQType").value;
+  if (!text) { showToast("Question text is required", "error"); return; }
+  if (!dim) { showToast("Please select a dimension", "error"); return; }
+
+  fetch(BASE_URL + "/dashboard/survey-forms/" + activeFormId + "/questions", {
+    method: "POST",
+    headers: getHeaders(true),
+    body: JSON.stringify({ question_text: text, dimension: dim, question_type: type })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() {
+    showToast("Question added", "success");
+    document.getElementById("newQText").value = "";
+    selectForm(activeFormId);
+  })
+  .catch(function(e) { console.error(e); showToast("Add failed", "error"); });
+}
+
+// ── EDIT QUESTION MODAL ───────────────────────────────────────────────────
+function openEditQuestionModal(qid) {
+  var q = null;
+  for (var i = 0; i < activeFormQuestions.length; i++) {
+    if (activeFormQuestions[i].id === qid) { q = activeFormQuestions[i]; break; }
+  }
+  if (!q) return;
+  editingQuestionId = qid;
+
+  // populate dimension options
+  var dimSel = document.getElementById("editQDim");
+  dimSel.innerHTML = "";
+  for (var d = 0; d < DIMENSIONS.length; d++) {
+    var opt = document.createElement("option");
+    opt.value = DIMENSIONS[d];
+    opt.textContent = DIMENSIONS[d];
+    if (DIMENSIONS[d] === q.dimension) opt.selected = true;
+    dimSel.appendChild(opt);
+  }
+
+  document.getElementById("editQText").value = q.question_text;
+  document.getElementById("editQType").value = q.question_type;
+  document.getElementById("questionModal").classList.add("open");
+}
+
+document.getElementById("questionModalCancel").addEventListener("click", function() {
+  document.getElementById("questionModal").classList.remove("open");
+});
+
+document.getElementById("questionModalSave").addEventListener("click", function() {
+  var text = document.getElementById("editQText").value.trim();
+  var dim = document.getElementById("editQDim").value;
+  var type = document.getElementById("editQType").value;
+  if (!text) { showToast("Question text is required", "error"); return; }
+
+  fetch(BASE_URL + "/dashboard/questions/" + editingQuestionId, {
+    method: "PUT",
+    headers: getHeaders(true),
+    body: JSON.stringify({ question_text: text, dimension: dim, question_type: type })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() {
+    document.getElementById("questionModal").classList.remove("open");
+    showToast("Question updated", "success");
+    selectForm(activeFormId);
+  })
+  .catch(function(e) { console.error(e); showToast("Update failed", "error"); });
+});
+
+// ── TOGGLE QUESTION ───────────────────────────────────────────────────────
+function toggleQuestion(qid, isActive) {
+  fetch(BASE_URL + "/dashboard/questions/" + qid, {
+    method: "PUT",
+    headers: getHeaders(true),
+    body: JSON.stringify({ is_active: !isActive })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() {
+    showToast(isActive ? "Question hidden" : "Question shown", "success");
+    selectForm(activeFormId);
+  })
+  .catch(function(e) { console.error(e); showToast("Toggle failed", "error"); });
+}
+
+// ── DELETE QUESTION ───────────────────────────────────────────────────────
+function deleteQuestion(qid) {
+  if (!confirm("Delete this question permanently?")) return;
+  fetch(BASE_URL + "/dashboard/questions/" + qid, {
+    method: "DELETE",
+    headers: getHeaders(false)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() {
+    showToast("Question deleted", "success");
+    selectForm(activeFormId);
+  })
+  .catch(function(e) { console.error(e); showToast("Delete failed", "error"); });
+}
+
+// ── CLOSE MODALS ON OVERLAY CLICK ─────────────────────────────────────────
+document.querySelectorAll(".modal-overlay").forEach(function(overlay) {
+  overlay.addEventListener("click", function(e) {
+    if (e.target === overlay) overlay.classList.remove("open");
+  });
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+loadForms();
 </script>
 </body>
 </html>

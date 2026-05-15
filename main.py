@@ -319,3 +319,13 @@ def get_all_responses(db: Session = Depends(get_db)):
          "question_id": r.question_id, "dimension": r.dimension, "answer": r.answer}
         for r in responses
     ]}
+
+@app.post("/dashboard/survey-forms/{form_id}/questions/reorder")
+def reorder_questions(form_id: str, data: QuestionsReorder, request: Request, db: Session = Depends(get_db),
+    credentials: HTTPAuthorizationCredentials = Security(HTTPBearer(auto_error=False))):
+    if not verify_wp_token(request) and not (credentials and verify_token(credentials.credentials)):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    for idx, qid in enumerate(data.question_ids):
+        db.query(SurveyQuestion).filter(SurveyQuestion.id == qid).update({"order_index": idx})
+    db.commit()
+    return {"message": "Reordered"}
