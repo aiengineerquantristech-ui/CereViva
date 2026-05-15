@@ -19,6 +19,8 @@ from email_service import send_report_to_all
 import uuid
 import os
 
+from schemas import SurveyFormCreate, SurveyFormUpdate, SurveyQuestionCreate, SurveyQuestionUpdate, QuestionsReorder
+
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
