@@ -391,7 +391,7 @@
 <script>
 // ── CONFIG ──────────────────────────────────────────────────────────────
 // NOTE: Jinja2 variables are captured ONCE into plain JS variables here.
-// Never use {{ }} inside JS template literals — it causes SyntaxError.
+// Never use double curly braces inside JS template literals — it causes SyntaxError.
 var WP_TOKEN = "{{ wp_token }}";
 var SKIP_AUTH = {{ 'true' if skip_auth else 'false' }};
 
