@@ -20,6 +20,15 @@ import os
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
+
+# ── Auto-migrate new columns ──────────────────────────────────
+from sqlalchemy import text
+try:
+    with engine.connect() as conn:
+        conn.execute(text("ALTER TABLE assessments ADD COLUMN IF NOT EXISTS survey_form_id VARCHAR"))
+        conn.commit()
+except Exception as e:
+    print(f"Migration note: {e}")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
