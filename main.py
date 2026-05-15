@@ -31,9 +31,8 @@ app.add_middleware(
 )
 
 # ── WordPress Token Auth ──────────────────────────────────────
-WP_SECRET_TOKEN = os.environ.get('DASHBOARD_SECRET_TOKEN')
-
 def verify_wp_token(request: Request):
+    WP_SECRET_TOKEN = os.environ.get('DASHBOARD_SECRET_TOKEN')
     token = request.query_params.get('token') or request.headers.get('X-WP-Token')
     return bool(token and token == WP_SECRET_TOKEN)
 
@@ -199,11 +198,12 @@ def login(data: LoginData):
 @app.get("/dashboard")
 def dashboard_page(request: Request):
     if not verify_wp_token(request):
-        return RedirectResponse(url="/login")
+        return RedirectResponse(url="/login", status_code=302)
+    wp_token = os.environ.get('DASHBOARD_SECRET_TOKEN')
     return templates.TemplateResponse(
         request=request,
         name="dashboard.html",
-        context={"skip_auth": True, "wp_token": WP_SECRET_TOKEN}
+        context={"skip_auth": True, "wp_token": wp_token}
     )
 
 @app.get("/dashboard/assessments")
