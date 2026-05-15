@@ -331,3 +331,16 @@ def reorder_questions(form_id: str, data: QuestionsReorder, request: Request, db
         db.query(SurveyQuestion).filter(SurveyQuestion.id == qid).update({"order_index": idx})
     db.commit()
     return {"message": "Reordered"}
+
+@app.get("/survey-editor")
+def survey_editor_page(request: Request):
+    if not verify_wp_token(request):
+        return RedirectResponse(url="/login", status_code=302)
+    return templates.TemplateResponse(
+        request=request,
+        name="survey_editor.html",
+        context={
+            "skip_auth": True,
+            "wp_token": os.environ.get('DASHBOARD_SECRET_TOKEN')
+        }
+    )
