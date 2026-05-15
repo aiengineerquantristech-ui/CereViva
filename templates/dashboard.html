@@ -17,7 +17,7 @@
       }
 
       .navbar {
-        background: #2b4c8f;
+        background: #FF670A;
         padding: 16px 32px;
         display: flex;
         justify-content: space-between;
@@ -63,7 +63,7 @@
       }
 
       .btn-primary {
-        background: #2b4c8f;
+        background: #FF670A;
         color: white;
         border: none;
         padding: 12px 24px;
@@ -73,7 +73,7 @@
         cursor: pointer;
       }
       .btn-primary:hover {
-        background: #1a3a6b;
+        background: #FF670A;
       }
 
       /* Stats */
@@ -92,7 +92,7 @@
       .stat-number {
         font-size: 32px;
         font-weight: 700;
-        color: #2b4c8f;
+        color: #FF670A;
       }
       .stat-label {
         font-size: 13px;
@@ -159,7 +159,7 @@
         font-size: 12px;
         font-weight: 700;
         background: #f0f4ff;
-        color: #2b4c8f;
+        color: #FF670A;
       }
 
       .actions {
@@ -272,7 +272,7 @@
         overflow-y: auto;
       }
       .report-header {
-        background: #2b4c8f;
+        background: #FF670A;
         color: white;
         padding: 20px;
         border-radius: 10px;
@@ -297,7 +297,7 @@
       .report-score-card .val {
         font-size: 22px;
         font-weight: 700;
-        color: #2b4c8f;
+        color: #FF670A;
       }
       .report-score-card .lbl {
         font-size: 11px;
@@ -342,7 +342,7 @@
       }
       input:focus,
       select:focus {
-        border-color: #2b4c8f;
+        border-color: #FF670A;
       }
 
       .modal-buttons {
@@ -362,7 +362,7 @@
       }
       .btn-create {
         flex: 2;
-        background: #2b4c8f;
+        background: #FF670A;
         color: white;
         border: none;
         padding: 12px;
@@ -393,7 +393,7 @@
       }
       .link-result p {
         font-size: 13px;
-        color: #2b4c8f;
+        color: #FF670A;
         font-weight: 600;
         margin-bottom: 8px;
       }
@@ -413,7 +413,7 @@
         word-break: break-all;
       }
       .btn-copy {
-        background: #2b4c8f;
+        background: #FF670A;
         color: white;
         border: none;
         padding: 8px 14px;
@@ -875,7 +875,7 @@
                         })
                     });
                     if (res.ok) {
-                        showToast("Assessment updated successfully ✅");
+                        showToast("Assessment updated successfully");
                         closeEditModal();
                         loadAssessments();
                     } else {
@@ -900,7 +900,7 @@
                         headers: getHeaders()
                     });
                     if (res.ok) {
-                        showToast("Assessment deleted ✅");
+                        showToast("Assessment deleted");
                         closeDeleteModal();
                         loadAssessments();
                     } else {
