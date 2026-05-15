@@ -645,7 +645,7 @@
 
     <script>
           const skipAuth = {{ skip_auth | tojson }};
-          const wpToken = {{ wp_token | tojson }};
+          const wpToken = "{{ wp_token or '' }}";
           const jwtToken = localStorage.getItem("token");
 
           if (!skipAuth && !jwtToken) {
@@ -654,15 +654,15 @@
 
           // ── Build headers — KEY FIX: pass WP token in header ─────
           function getHeaders(includeContent = false) {
-              const headers = {};
-              if (includeContent) headers["Content-Type"] = "application/json";
-              if (skipAuth && wpToken) {
-                  headers["X-WP-Token"] = wpToken;
-              } else if (jwtToken) {
-                  headers["Authorization"] = "Bearer " + jwtToken;
-              }
-              return headers;
-          }
+    const headers = {};
+    if (includeContent) headers["Content-Type"] = "application/json";
+    if (skipAuth && wpToken && wpToken !== 'None' && wpToken !== '') {
+        headers["X-WP-Token"] = wpToken;
+    } else if (jwtToken) {
+        headers["Authorization"] = "Bearer " + jwtToken;
+    }
+    return headers;
+}
 
           function showToast(msg, isError = false) {
               const t = document.getElementById("toast");

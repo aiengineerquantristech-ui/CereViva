@@ -199,10 +199,11 @@ def login(data: LoginData):
 
 @app.get("/dashboard")
 def dashboard_page(request: Request):
-   # if not verify_wp_token(request):
-    #    return RedirectResponse(url="/login")
+    if not verify_wp_token(request):
+        return RedirectResponse(url="/login")
     return templates.TemplateResponse(
-        request=request, name="dashboard.html",
+        request=request,
+        name="dashboard.html",
         context={"skip_auth": True, "wp_token": WP_SECRET_TOKEN}
     )
 
