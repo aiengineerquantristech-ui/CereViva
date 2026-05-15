@@ -69,6 +69,8 @@ class LoginData(BaseModel):
     username: str
     password: str
 
+class QuestionsReorder(BaseModel):
+    question_ids: list
 # ── Public Routes ─────────────────────────────────────────────
 
 @app.get("/")
