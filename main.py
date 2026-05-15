@@ -1,3 +1,4 @@
+from models import Assessment, Response, Report, SurveyForm, SurveyQuestion
 from fastapi.templating import Jinja2Templates
 from fastapi import Request, FastAPI, Depends, HTTPException, Security
 from fastapi.middleware.cors import CORSMiddleware
