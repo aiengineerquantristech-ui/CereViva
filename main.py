@@ -1,4 +1,5 @@
 from models import Assessment, Response, Report, SurveyForm, SurveyQuestion
+from typing import Optional
 from fastapi.templating import Jinja2Templates
 from fastapi import Request, FastAPI, Depends, HTTPException, Security
 from fastapi.middleware.cors import CORSMiddleware
@@ -491,3 +492,30 @@ def reorder_questions(
         db.query(SurveyQuestion).filter(SurveyQuestion.id == qid).update({"order_index": idx})
     db.commit()
     return {"message": "Reordered successfully"}
+
+# ── SURVEY PYDANTIC MODELS ────────────────────────────────────
+
+class SurveyFormCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+
+class SurveyFormUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    is_active: Optional[bool] = None
+
+class SurveyQuestionCreate(BaseModel):
+    question_text: str
+    dimension: str
+    question_type: str = "scale"
+    order_index: int = 0
+
+class SurveyQuestionUpdate(BaseModel):
+    question_text: Optional[str] = None
+    dimension: Optional[str] = None
+    question_type: Optional[str] = None
+    order_index: Optional[int] = None
+    is_active: Optional[bool] = None
+
+class QuestionsReorder(BaseModel):
+    question_ids: list
