@@ -766,34 +766,40 @@ function addQuestion() {
   if (!text) { showToast("Question text is required", "error"); return; }
   if (!dim) { showToast("Please select a dimension", "error"); return; }
 
+  // ✅ Map type values to what API expects
+  var apiType = type === "text" ? "open_text" : type === "yesno" ? "open_text" : "scale";
+
   fetch(BASE_URL + "/dashboard/survey-forms/" + activeFormId + "/questions", {
     method: "POST",
     headers: getHeaders(true),
-    body: JSON.stringify({ question_text: text, dimension: dim, question_type: type })
+    body: JSON.stringify({ 
+        question_text: text, 
+        dimension: dim, 
+        question_type: apiType,
+        order_index: activeFormQuestions.length
+    })
   })
-  .then(function(r) { return r.json(); })
-  .then(function() {
-    showToast("Question added", "success");
-    document.getElementById("newQText").value = "";
-    selectForm(activeFormId);
-  })
-  
-
-.then(function(r) {
+  .then(function(r) {
     if (!r.ok) {
-      return r.json().then(function(e) { throw new Error(e.detail || "Add failed"); });
+      return r.json().then(function(e) { throw new Error(JSON.stringify(e)); });
     }
     return r.json();
   })
   .then(function(data) {
-    showToast("Question added", "success");
-  })
-
-.then(function(data) {
     console.log("Add response:", JSON.stringify(data));
     showToast("Question added", "success");
+    document.getElementById("newQText").value = "";
+    fetch(BASE_URL + "/dashboard/survey-forms/" + activeFormId + "/questions", { headers: getHeaders(false) })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        activeFormQuestions = data.questions || [];
+        renderEditor(data);
+      });
   })
-  .catch(function(e) { console.error(e); showToast("Add failed", "error"); });
+  .catch(function(e) {
+    console.error("Add question error:", e);
+    showToast(e.message || "Add failed", "error");
+  });
 }
 // ── EDIT QUESTION MODAL ───────────────────────────────────────────────────
 function openEditQuestionModal(qid) {
