@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+
 class SurveyFormCreate(BaseModel):
     name: str
     description: Optional[str] = None
@@ -21,3 +22,13 @@ class SurveyQuestionUpdate(BaseModel):
 
 class QuestionsReorder(BaseModel):
     question_ids: List[int]
+
+# Updated schemas.py
+
+
+class SurveyQuestionCreate(BaseModel):
+    text: str
+    type: str  # Options: 'text', 'multiple_choice', 'checkbox', 'scale'
+    dimension: Optional[str] = "General"
+    options: Optional[List[str]] = []  # For Multiple Choice/Checkboxes
+    is_required: bool = True
