@@ -777,9 +777,24 @@ function addQuestion() {
     document.getElementById("newQText").value = "";
     selectForm(activeFormId);
   })
+  
+
+.then(function(r) {
+    if (!r.ok) {
+      return r.json().then(function(e) { throw new Error(e.detail || "Add failed"); });
+    }
+    return r.json();
+  })
+  .then(function(data) {
+    showToast("Question added", "success");
+  })
+
+.then(function(data) {
+    console.log("Add response:", JSON.stringify(data));
+    showToast("Question added", "success");
+  })
   .catch(function(e) { console.error(e); showToast("Add failed", "error"); });
 }
-
 // ── EDIT QUESTION MODAL ───────────────────────────────────────────────────
 function openEditQuestionModal(qid) {
   var q = null;
