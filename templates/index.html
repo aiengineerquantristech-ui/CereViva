@@ -5,87 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CereViva NeuroSafety™ Diagnostic</title>
     <style>
+        :root {
+            --brand-orange: #FF670A;
+            --brand-orange-dark: #C44E12;
+            --brand-beige: #F5F1EA;
+            --light-orange: #FFF0E8;
+            --white: #FFFFFF;
+            --black: #1a1a1a;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--brand-beige);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
 
+        /* Logo header */
+        .top-logo {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .top-logo img {
+            height: 52px;
+            background: var(--brand-orange);
+            padding: 8px 14px;
+            border-radius: 10px;
+        }
+
         .card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
-            max-width: 600px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+            max-width: 620px;
             width: 100%;
-            padding: 40px;
+            padding: 44px;
         }
 
         .brand {
-            font-size: 13px;
-            font-weight: 700;
-            color: #2B4C8F;
-            letter-spacing: 2px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--brand-orange);
+            letter-spacing: 2.5px;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         h1 {
-            font-size: 24px;
-            color: #1a1a1a;
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--black);
             margin-bottom: 8px;
         }
 
         .subtitle {
             font-size: 14px;
-            color: #666;
+            color: #888;
             margin-bottom: 32px;
+            line-height: 1.6;
         }
 
+        /* Progress */
         .progress-bar {
             height: 6px;
-            background: #f0f0f0;
+            background: #eee;
             border-radius: 10px;
             margin-bottom: 8px;
         }
-
         .progress-fill {
             height: 6px;
-            background: #2B4C8F;
+            background: var(--brand-orange);
             border-radius: 10px;
             transition: width 0.3s ease;
         }
-
         .progress-text {
             font-size: 12px;
-            color: #999;
+            color: #aaa;
             margin-bottom: 24px;
             display: flex;
             justify-content: space-between;
         }
 
         .dimension-label {
-            font-size: 12px;
-            font-weight: 700;
-            color: #2B4C8F;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--brand-orange);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             margin-bottom: 12px;
         }
 
         .question-text {
             font-size: 18px;
-            font-weight: 600;
-            color: #1a1a1a;
-            line-height: 1.5;
+            font-weight: 700;
+            color: var(--black);
+            line-height: 1.55;
             margin-bottom: 28px;
         }
 
+        /* Answer options */
         .options {
             display: flex;
             flex-direction: column;
@@ -97,45 +121,45 @@
             align-items: center;
             gap: 14px;
             padding: 14px 18px;
-            border: 2px solid #e8e8e8;
+            border: 2px solid #eee;
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.18s ease;
             font-size: 15px;
-            color: #333;
+            color: #444;
+            background: var(--brand-beige);
         }
-
         .option:hover {
-            border-color: #2B4C8F;
-            background: #f0f4ff;
+            border-color: var(--brand-orange);
+            background: var(--light-orange);
         }
-
         .option.selected {
-            border-color: #2B4C8F;
-            background: #f0f4ff;
-            color: #2B4C8F;
-            font-weight: 600;
+            border-color: var(--brand-orange);
+            background: var(--light-orange);
+            color: var(--brand-orange-dark);
+            font-weight: 700;
         }
 
         .option-number {
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             border: 2px solid #ccc;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 800;
             flex-shrink: 0;
+            background: white;
         }
-
         .option.selected .option-number {
-            background: #2B4C8F;
-            border-color: #2B4C8F;
+            background: var(--brand-orange);
+            border-color: var(--brand-orange);
             color: white;
         }
 
+        /* Nav buttons */
         .nav-buttons {
             display: flex;
             justify-content: space-between;
@@ -146,125 +170,139 @@
         .btn-back {
             background: none;
             border: none;
-            color: #999;
+            color: #aaa;
             font-size: 14px;
             cursor: pointer;
+            font-family: inherit;
         }
-
         .btn-back:hover { color: #666; }
 
         .btn-next {
-            background: #2B4C8F;
+            background: var(--brand-orange);
             color: white;
             border: none;
-            padding: 12px 28px;
+            padding: 13px 30px;
             border-radius: 10px;
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: background 0.2s;
+            font-family: inherit;
         }
+        .btn-next:hover { background: var(--brand-orange-dark); }
+        .btn-next:disabled { opacity: 0.35; cursor: not-allowed; }
 
-        .btn-next:hover { background: #1a3a6b; }
-        .btn-next:disabled { opacity: 0.4; cursor: not-allowed; }
-
+        /* Textarea */
         .textarea-field {
             width: 100%;
-            border: 2px solid #e8e8e8;
+            border: 2px solid #eee;
             border-radius: 12px;
             padding: 16px;
             font-size: 15px;
-            font-family: Arial, sans-serif;
+            font-family: inherit;
             color: #333;
             resize: none;
             outline: none;
+            background: var(--brand-beige);
             transition: border 0.2s;
         }
+        .textarea-field:focus { border-color: var(--brand-orange); background: white; }
 
-        .textarea-field:focus { border-color: #2B4C8F; }
+        /* Demographics section */
+        .demo-section {
+            background: var(--light-orange);
+            border: 1.5px solid #FFBE98;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 24px;
+        }
+        .demo-section h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--brand-orange-dark);
+            margin-bottom: 14px;
+        }
+        .demo-input {
+            width: 100%;
+            border: 1.5px solid #FFBE98;
+            border-radius: 10px;
+            padding: 11px 14px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            outline: none;
+            background: white;
+            font-family: inherit;
+            color: #333;
+            cursor: pointer;
+            transition: border 0.2s;
+        }
+        .demo-input:focus { border-color: var(--brand-orange); }
+        .demo-input:last-child { margin-bottom: 0; }
+
+        .btn-start {
+            width: 100%;
+            background: var(--brand-orange);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            font-family: inherit;
+            transition: background 0.2s;
+            box-shadow: 0 4px 16px rgba(255,103,10,0.25);
+        }
+        .btn-start:hover { background: var(--brand-orange-dark); }
+
+        /* Submit / Done */
+        .submit-card { text-align: center; }
 
         .submit-icon {
-            width: 64px;
-            height: 64px;
-            background: #e8f5e9;
+            width: 68px;
+            height: 68px;
+            background: var(--light-orange);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 20px;
-            font-size: 28px;
+            font-size: 30px;
+            border: 2px solid #FFBE98;
         }
 
-        .submit-card { text-align: center; }
-
         .info-box {
-            background: #f0f4ff;
-            border-radius: 12px;
-            padding: 16px 20px;
+            background: var(--light-orange);
+            border: 1.5px solid #FFBE98;
+            border-radius: 14px;
+            padding: 18px 22px;
             text-align: left;
             margin: 20px 0;
         }
-
         .info-box p {
             font-size: 13px;
-            font-weight: 700;
-            color: #2B4C8F;
-            margin-bottom: 8px;
+            font-weight: 800;
+            color: var(--brand-orange);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-
         .info-box ol {
-            font-size: 13px;
-            color: #2B4C8F;
+            font-size: 14px;
+            color: #555;
             padding-left: 18px;
         }
-
-        .info-box ol li { margin-bottom: 4px; }
-
-        .demo-section {
-            background: #fff8e7;
-            border: 1px solid #f0a500;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-
-        .demo-section h3 {
-            font-size: 14px;
-            color: #b37400;
-            margin-bottom: 12px;
-        }
-
-        .demo-input {
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px 14px;
-            font-size: 14px;
-            margin-bottom: 10px;
-            outline: none;
-        }
-
-        .demo-input:focus { border-color: #2B4C8F; }
-
-        .btn-start {
-            width: 100%;
-            background: #2B4C8F;
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-
-        .btn-start:hover { background: #1a3a6b; }
-
-        select.demo-input { cursor: pointer; }
+        .info-box ol li { margin-bottom: 6px; line-height: 1.5; }
     </style>
 </head>
 <body>
+
+<!-- Top Logo -->
+<div class="top-logo">
+    <img src="https://ceravive.digitalblocs.com/wp-content/uploads/2026/05/logo-1-2.png" alt="CereViva Logo">
+</div>
+
 <div class="card" id="app">
 
     <!-- Step 0: Demographics -->
@@ -372,7 +410,7 @@
                 <li id="result-band"></li>
             </ol>
         </div>
-        <a href="https://cereviva.com" style="display:inline-block; margin-top:16px; background:#2B4C8F; color:white; padding:12px 28px; border-radius:10px; text-decoration:none; font-weight:600;">Visit CereViva →</a>
+        <a href="https://cereviva.com" style="display:inline-block; margin-top:20px; background:var(--brand-orange); color:white; padding:14px 32px; border-radius:12px; text-decoration:none; font-weight:700; font-size:15px; box-shadow:0 4px 16px rgba(255,103,10,0.25);">Visit CereViva →</a>
     </div>
 
 </div>
@@ -443,20 +481,20 @@
     }
 
     function selectAnswer(qId, value) {
-    answers[qId] = value;
-    renderQuestion();
-    document.getElementById("btn-next").disabled = false;
-    setTimeout(() => {
-        if (currentQuestion < questions.length - 1) {
-            currentQuestion++;
-            renderQuestion();
-        } else {
-            document.getElementById("step-questions").style.display = "none";
-            document.getElementById("step-opentext").style.display = "block";
-            renderOpen();
-        }
-    }, 300);
-}
+        answers[qId] = value;
+        renderQuestion();
+        document.getElementById("btn-next").disabled = false;
+        setTimeout(() => {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                document.getElementById("step-questions").style.display = "none";
+                document.getElementById("step-opentext").style.display = "block";
+                renderOpen();
+            }
+        }, 300);
+    }
 
     function nextQuestion() {
         if (currentQuestion < questions.length - 1) {
@@ -487,20 +525,17 @@
     }
 
     function nextOpen() {
-    const answer = document.getElementById("open-answer").value.trim();
-    if (!answer) {
-        alert("Please write an answer before continuing.");
-        return;
+        const answer = document.getElementById("open-answer").value.trim();
+        if (!answer) { alert("Please write an answer before continuing."); return; }
+        openAnswers[currentOpen] = answer;
+        if (currentOpen < openTextQuestions.length - 1) {
+            currentOpen++;
+            renderOpen();
+        } else {
+            document.getElementById("step-opentext").style.display = "none";
+            document.getElementById("step-submit").style.display = "block";
+        }
     }
-    openAnswers[currentOpen] = answer;
-    if (currentOpen < openTextQuestions.length - 1) {
-        currentOpen++;
-        renderOpen();
-    } else {
-        document.getElementById("step-opentext").style.display = "none";
-        document.getElementById("step-submit").style.display = "block";
-    }
-}
 
     function prevOpen() {
         openAnswers[currentOpen] = document.getElementById("open-answer").value;
@@ -537,9 +572,7 @@
             })
         });
 
-        
         const data = await res.json();
-        console.log(data);
         document.getElementById("step-submit").style.display = "none";
         document.getElementById("step-done").style.display = "block";
         document.getElementById("result-score").textContent = "Overall Score: " + (data.overall_score || "N/A") + " / 5";
