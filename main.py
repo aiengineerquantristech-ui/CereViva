@@ -99,12 +99,14 @@ def get_assessment(token: str, db: Session = Depends(get_db)):
     assessment = db.query(Assessment).filter(Assessment.token == token).first()
     if not assessment:
         raise HTTPException(status_code=404, detail="Assessment not found")
-    if assessment.expires_at < datetime.utcnow():
-        raise HTTPException(status_code=410, detail="Assessment link has expired")
-    if assessment.status == "completed":
-        assessment.status = "pending"
+    # Always allow reuse — reset to pending each visit
+    assessment.status = "pending"
     db.commit()
-    return {"client_name": assessment.client_name, "org_name": assessment.org_name, "status": assessment.status}
+    return {
+        "client_name": assessment.client_name,
+        "org_name": assessment.org_name,
+        "status": assessment.status,
+    }
 
 @app.post("/assessment/create")
 def create_assessment(data: AssessmentCreate, db: Session = Depends(get_db)):
@@ -115,7 +117,7 @@ def create_assessment(data: AssessmentCreate, db: Session = Depends(get_db)):
         client_email=data.client_email,
         org_name=data.org_name,
         industry=data.industry,
-        expires_at=datetime.utcnow() + timedelta(days=30),
+        expires_at=datetime.utcnow() + timedelta(days=365),
     )
     db.add(assessment)
     db.commit()
@@ -123,23 +125,27 @@ def create_assessment(data: AssessmentCreate, db: Session = Depends(get_db)):
     base_url = os.environ.get("BASE_URL", "http://localhost:3000")
     return {"token": token, "link": f"{base_url}/assess/{token}", "message": "Assessment created successfully"}
 
+
 @app.post("/assessment/submit")
 def submit_assessment(data: SubmitAssessment, db: Session = Depends(get_db)):
     assessment = db.query(Assessment).filter(Assessment.token == data.token).first()
     if not assessment:
-        assessment = Assessment(
-            token=data.token, client_name="Test Client", client_email="test@test.com",
-            org_name="Test Organisation", expires_at=datetime.utcnow() + timedelta(days=30),
-        )
-        db.add(assessment)
-        db.commit()
-        db.refresh(assessment)
+        raise HTTPException(status_code=404, detail="Assessment not found")
+
+    #  Delete old responses so new ones can be saved fresh
+    db.query(Response).filter(Response.assessment_id == assessment.id).delete()
+    db.query(Report).filter(Report.assessment_id == assessment.id).delete()
+    db.commit()
 
     for q in QUESTIONS:
-        db.add(Response(
-            assessment_id=assessment.id, question_id=q["id"],
-            dimension=q["dimension"], answer=data.answers.get(str(q["id"]), 3),
-        ))
+        answer_value = data.answers.get(str(q["id"]), 3)
+        response = Response(
+            assessment_id=assessment.id,
+            question_id=q["id"],
+            dimension=q["dimension"],
+            answer=answer_value,
+        )
+        db.add(response)
 
     responses = [{"question_id": q["id"], "dimension": q["dimension"], "answer": data.answers.get(str(q["id"]), 3)} for q in QUESTIONS]
     result = calculate_scores(responses)
@@ -154,9 +160,9 @@ def submit_assessment(data: SubmitAssessment, db: Session = Depends(get_db)):
             risk_band=result["risk_band"], dimension_scores=result["dimension_scores"],
             top_risks=result["top_risks"],
         )
-        print("✅ Gemini report generated")
+        print("Gemini report generated")
     except Exception as e:
-        print(f"❌ Gemini failed: {e}")
+        print(f"Gemini failed: {e}")
         ai_narrative = "Report generation failed. Please contact support."
 
     db.add(Report(
@@ -176,7 +182,7 @@ def submit_assessment(data: SubmitAssessment, db: Session = Depends(get_db)):
             report_text=ai_narrative,
         )
     except Exception as e:
-        print(f"❌ Email failed: {e}")
+        print(f" Email failed: {e}")
 
     return {
         "message": "Assessment submitted successfully",
