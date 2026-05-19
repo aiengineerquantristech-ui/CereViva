@@ -13,9 +13,7 @@
             --white: #FFFFFF;
             --black: #1a1a1a;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--brand-beige);
@@ -26,66 +24,28 @@
             justify-content: center;
             padding: 20px;
         }
-
-        .top-logo {
-            margin-bottom: 24px;
-            text-align: center;
-        }
-        .top-logo img {
-            height: 52px;
-            background: var(--brand-orange);
-            padding: 8px 14px;
-            border-radius: 10px;
-        }
-
+        .top-logo { margin-bottom: 24px; text-align: center; }
+        .top-logo img { height: 52px; background: var(--brand-orange); padding: 8px 14px; border-radius: 10px; }
         .card {
-            background: var(--white);
-            border-radius: 20px;
+            background: var(--white); border-radius: 20px;
             box-shadow: 0 4px 32px rgba(0,0,0,0.08);
-            max-width: 620px;
-            width: 100%;
-            padding: 44px;
+            max-width: 620px; width: 100%; padding: 44px;
         }
-
-        .brand {
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--brand-orange);
-            letter-spacing: 2.5px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
+        .brand { font-size: 12px; font-weight: 800; color: var(--brand-orange); letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 10px; }
+        h1 { font-size: 26px; font-weight: 800; color: var(--black); margin-bottom: 8px; }
+        .subtitle { font-size: 14px; color: #888; margin-bottom: 28px; line-height: 1.6; }
+        .org-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--light-orange); border: 1.5px solid #FFBE98;
+            border-radius: 8px; padding: 8px 14px; margin-bottom: 24px;
+            font-size: 13px; font-weight: 700; color: var(--brand-orange-dark);
         }
-
-        h1 {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--black);
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            font-size: 14px;
-            color: #888;
-            margin-bottom: 32px;
-            line-height: 1.6;
-        }
-
         .progress-bar { height: 6px; background: #eee; border-radius: 10px; margin-bottom: 8px; }
         .progress-fill { height: 6px; background: var(--brand-orange); border-radius: 10px; transition: width 0.3s ease; }
         .progress-text { font-size: 12px; color: #aaa; margin-bottom: 24px; display: flex; justify-content: space-between; }
-
-        .dimension-label {
-            font-size: 11px; font-weight: 800; color: var(--brand-orange);
-            text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;
-        }
-
-        .question-text {
-            font-size: 18px; font-weight: 700; color: var(--black);
-            line-height: 1.55; margin-bottom: 28px;
-        }
-
+        .dimension-label { font-size: 11px; font-weight: 800; color: var(--brand-orange); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+        .question-text { font-size: 18px; font-weight: 700; color: var(--black); line-height: 1.55; margin-bottom: 28px; }
         .options { display: flex; flex-direction: column; gap: 10px; }
-
         .option {
             display: flex; align-items: center; gap: 14px;
             padding: 14px 18px; border: 2px solid #eee; border-radius: 12px;
@@ -94,19 +54,15 @@
         }
         .option:hover { border-color: var(--brand-orange); background: var(--light-orange); }
         .option.selected { border-color: var(--brand-orange); background: var(--light-orange); color: var(--brand-orange-dark); font-weight: 700; }
-
         .option-number {
             width: 30px; height: 30px; border-radius: 50%; border: 2px solid #ccc;
             display: flex; align-items: center; justify-content: center;
             font-size: 12px; font-weight: 800; flex-shrink: 0; background: white;
         }
         .option.selected .option-number { background: var(--brand-orange); border-color: var(--brand-orange); color: white; }
-
         .nav-buttons { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; }
-
         .btn-back { background: none; border: none; color: #aaa; font-size: 14px; cursor: pointer; font-family: inherit; }
         .btn-back:hover { color: #666; }
-
         .btn-next {
             background: var(--brand-orange); color: white; border: none;
             padding: 13px 30px; border-radius: 10px; font-size: 15px; font-weight: 700;
@@ -114,40 +70,27 @@
         }
         .btn-next:hover { background: var(--brand-orange-dark); }
         .btn-next:disabled { opacity: 0.35; cursor: not-allowed; }
-
         .textarea-field {
             width: 100%; border: 2px solid #eee; border-radius: 12px;
             padding: 16px; font-size: 15px; font-family: inherit; color: #333;
             resize: none; outline: none; background: var(--brand-beige); transition: border 0.2s;
         }
         .textarea-field:focus { border-color: var(--brand-orange); background: white; }
-
-        /* Registration + Demographics section */
         .info-section {
-            background: var(--light-orange);
-            border: 1.5px solid #FFBE98;
-            border-radius: 14px;
-            padding: 22px;
-            margin-bottom: 16px;
+            background: var(--light-orange); border: 1.5px solid #FFBE98;
+            border-radius: 14px; padding: 22px; margin-bottom: 16px;
         }
-        .info-section h3 {
-            font-size: 14px; font-weight: 700;
-            color: var(--brand-orange-dark); margin-bottom: 14px;
-        }
-
+        .info-section h3 { font-size: 14px; font-weight: 700; color: var(--brand-orange-dark); margin-bottom: 14px; }
         .field-group { margin-bottom: 12px; }
+        .field-group:last-child { margin-bottom: 0; }
         .field-label { font-size: 12px; font-weight: 700; color: #666; margin-bottom: 5px; display: block; }
-
         .field-input {
             width: 100%; border: 1.5px solid #FFBE98; border-radius: 10px;
             padding: 11px 14px; font-size: 14px; outline: none;
-            background: white; font-family: inherit; color: #333;
-            transition: border 0.2s;
+            background: white; font-family: inherit; color: #333; transition: border 0.2s;
         }
         .field-input:focus { border-color: var(--brand-orange); }
-
         select.field-input { cursor: pointer; }
-
         .btn-start {
             width: 100%; background: var(--brand-orange); color: white; border: none;
             padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 700;
@@ -155,15 +98,12 @@
             box-shadow: 0 4px 16px rgba(255,103,10,0.25);
         }
         .btn-start:hover { background: var(--brand-orange-dark); }
-
         .submit-card { text-align: center; }
-
         .submit-icon {
             width: 68px; height: 68px; background: var(--light-orange); border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 20px; font-size: 30px; border: 2px solid #FFBE98;
         }
-
         .info-box {
             background: var(--light-orange); border: 1.5px solid #FFBE98;
             border-radius: 14px; padding: 18px 22px; text-align: left; margin: 20px 0;
@@ -171,6 +111,7 @@
         .info-box p { font-size: 13px; font-weight: 800; color: var(--brand-orange); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
         .info-box ol { font-size: 14px; color: #555; padding-left: 18px; }
         .info-box ol li { margin-bottom: 6px; line-height: 1.5; }
+        .error-msg { color: #c62828; font-size: 13px; margin-top: 8px; display: none; }
     </style>
 </head>
 <body>
@@ -181,46 +122,33 @@
 
 <div class="card" id="app">
 
-    <!-- Step 0: Registration + Demographics -->
+    <!-- Step 0: Employee Details + Demographics -->
     <div id="step-demographics">
         <div class="brand">NeuroSafety™ Diagnostic</div>
-        <h1>Welcome</h1>
+        <h1 id="org-title">NeuroSafety Assessment</h1>
         <p class="subtitle">This assessment takes approximately 8–10 minutes. Your responses are confidential.</p>
 
-        <!-- Client Details -->
+        <!-- Show org name if loaded -->
+        <div class="org-badge" id="org-badge" style="display:none">
+            🏢 <span id="org-name-display"></span>
+        </div>
+
+        <!-- Employee Details -->
         <div class="info-section">
             <h3>Your Details</h3>
             <div class="field-group">
                 <label class="field-label">Full Name *</label>
-                <input type="text" class="field-input" id="client-name" placeholder="e.g. John Smith" />
+                <input type="text" class="field-input" id="emp-name" placeholder="e.g. John Smith" />
             </div>
             <div class="field-group">
                 <label class="field-label">Email Address *</label>
-                <input type="email" class="field-input" id="client-email" placeholder="e.g. john@company.com" />
-            </div>
-            <div class="field-group">
-                <label class="field-label">Organisation Name *</label>
-                <input type="text" class="field-input" id="client-org" placeholder="e.g. Acme Corp" />
-            </div>
-            <div class="field-group" style="margin-bottom:0">
-                <label class="field-label">Industry</label>
-                <select class="field-input" id="client-industry">
-                    <option value="">Select industry...</option>
-                    <option>Construction</option>
-                    <option>Mining</option>
-                    <option>Manufacturing</option>
-                    <option>Healthcare</option>
-                    <option>Transport and Logistics</option>
-                    <option>Oil and Gas</option>
-                    <option>Agriculture</option>
-                    <option>Other</option>
-                </select>
+                <input type="email" class="field-input" id="emp-email" placeholder="e.g. john@company.com" />
             </div>
         </div>
 
         <!-- Demographics -->
         <div class="info-section">
-            <h3>About You</h3>
+            <h3>About Your Role</h3>
             <div class="field-group">
                 <label class="field-label">Your Role</label>
                 <select class="field-input" id="demo-role">
@@ -244,7 +172,7 @@
                     <option>More than 5 years</option>
                 </select>
             </div>
-            <div class="field-group" style="margin-bottom:0">
+            <div class="field-group">
                 <label class="field-label">Which area do you work in?</label>
                 <select class="field-input" id="demo-area">
                     <option value="">Select area...</option>
@@ -257,10 +185,11 @@
             </div>
         </div>
 
+        <div class="error-msg" id="error-msg">Please fill in all required fields.</div>
         <button class="btn-start" onclick="startAssessment()">Begin Assessment →</button>
     </div>
 
-    <!-- Step 1-50: Questions -->
+    <!-- Questions -->
     <div id="step-questions" style="display:none">
         <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
         <div class="progress-text">
@@ -300,8 +229,8 @@
             <p>What happens next?</p>
             <ol>
                 <li>Your report will be generated automatically</li>
-                <li>Review your NeuroSafety™ Maturity Score</li>
-                <li>Book a call with Phoebe to discuss your action plan</li>
+                <li>Your results will be sent to your email</li>
+                <li>The CereViva team will be in touch to discuss your action plan</li>
             </ol>
         </div>
         <div class="nav-buttons" style="justify-content:center; gap:12px;">
@@ -314,7 +243,7 @@
     <div id="step-done" style="display:none" class="submit-card">
         <div class="submit-icon">🎉</div>
         <h1>Report Submitted!</h1>
-        <p class="subtitle">Your NeuroSafety™ report has been generated and will be sent to your email shortly.</p>
+        <p class="subtitle">Your NeuroSafety™ report has been generated and sent to your email.</p>
         <div class="info-box">
             <p>Your Results</p>
             <ol>
@@ -323,7 +252,7 @@
                 <li id="result-band"></li>
             </ol>
         </div>
-        <a href="https://cereviva.com" style="display:inline-block;margin-top:20px;background:var(--brand-orange);color:white;padding:14px 32px;border-radius:12px;text-decoration:none;font-weight:700;font-size:15px;">Visit CereViva →</a>
+        <a href="https://cereviva.com" style="display:inline-block;margin-top:20px;background:var(--brand-orange);color:white;padding:14px 32px;border-radius:12px;text-decoration:none;font-weight:700;font-size:15px;box-shadow:0 4px 16px rgba(255,103,10,0.25);">Visit CereViva →</a>
     </div>
 
 </div>
@@ -337,6 +266,10 @@
         { value: 5, label: "Consistently" },
     ];
 
+    // Get token from URL
+    const urlParts = window.location.pathname.split("/");
+    const token = urlParts[urlParts.length - 1];
+
     let questions = [];
     let openTextQuestions = [];
     let currentQuestion = 0;
@@ -344,34 +277,57 @@
     let answers = {};
     let openAnswers = {};
     let demographics = {};
-    let clientDetails = {};
+    let employeeDetails = {};
+    let assessmentData = null; // org info from token
 
-    async function loadQuestions() {
-        const res = await fetch("/questions");
-        const data = await res.json();
-        questions = data.questions;
-        openTextQuestions = data.open_text_questions;
+    async function init() {
+        // Load questions
+        const qRes = await fetch("/questions");
+        const qData = await qRes.json();
+        questions = qData.questions;
+        openTextQuestions = qData.open_text_questions;
+
+        // Load assessment details from token (org name etc)
+        try {
+            const aRes = await fetch("/assessment/" + token);
+            if (aRes.ok) {
+                assessmentData = await aRes.json();
+                document.getElementById("org-title").textContent = assessmentData.org_name + " — NeuroSafety Assessment";
+                document.getElementById("org-name-display").textContent = assessmentData.org_name;
+                document.getElementById("org-badge").style.display = "inline-flex";
+            }
+        } catch(e) {
+            console.log("No org data loaded");
+        }
     }
 
     function startAssessment() {
-        const name = document.getElementById("client-name").value.trim();
-        const email = document.getElementById("client-email").value.trim();
-        const org = document.getElementById("client-org").value.trim();
-        const industry = document.getElementById("client-industry").value;
+        const name = document.getElementById("emp-name").value.trim();
+        const email = document.getElementById("emp-email").value.trim();
         const role = document.getElementById("demo-role").value;
         const tenure = document.getElementById("demo-tenure").value;
         const area = document.getElementById("demo-area").value;
 
-        if (!name || !email || !org) {
-            alert("Please fill in your name, email and organisation before continuing.");
+        const errEl = document.getElementById("error-msg");
+
+        if (!name || !email) {
+            errEl.textContent = "Please enter your name and email.";
+            errEl.style.display = "block";
+            return;
+        }
+        if (!email.includes("@")) {
+            errEl.textContent = "Please enter a valid email address.";
+            errEl.style.display = "block";
             return;
         }
         if (!role || !tenure || !area) {
-            alert("Please answer all 'About You' questions before continuing.");
+            errEl.textContent = "Please answer all role questions before continuing.";
+            errEl.style.display = "block";
             return;
         }
 
-        clientDetails = { name, email, org, industry };
+        errEl.style.display = "none";
+        employeeDetails = { name, email };
         demographics = { role, tenure, area };
 
         document.getElementById("step-demographics").style.display = "none";
@@ -483,14 +439,13 @@
         btn.disabled = true;
         btn.textContent = "Submitting...";
 
-        const res = await fetch("/assessment/submit-public", {
+        const res = await fetch("/assessment/submit-employee", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                client_name: clientDetails.name,
-                client_email: clientDetails.email,
-                org_name: clientDetails.org,
-                industry: clientDetails.industry,
+                org_token: token,
+                employee_name: employeeDetails.name,
+                employee_email: employeeDetails.email,
                 demographics: demographics,
                 answers: answers,
                 open_text: openAnswers,
@@ -505,7 +460,7 @@
         document.getElementById("result-band").textContent = "Risk Band: " + (data.risk_band || "N/A");
     }
 
-    loadQuestions();
+    init();
 </script>
 </body>
 </html>

@@ -68,6 +68,14 @@ class SubmitAssessment(BaseModel):
     answers: dict
     open_text: dict
 
+class EmployeeSubmitAssessment(BaseModel):
+    org_token: str           # the reusable token for this org
+    employee_name: str       # employee fills this
+    employee_email: str      # employee fills this
+    demographics: dict
+    answers: dict
+    open_text: dict
+
 class LoginData(BaseModel):
     username: str
     password: str
@@ -108,15 +116,15 @@ def get_assessment(token: str, db: Session = Depends(get_db)):
     assessment = db.query(Assessment).filter(Assessment.token == token).first()
     if not assessment:
         raise HTTPException(status_code=404, detail="Assessment not found")
-    # Always allow reuse — reset to pending each visit
-    assessment.status = "pending"
-    db.commit()
+    if assessment.expires_at < datetime.utcnow():
+        raise HTTPException(status_code=410, detail="Assessment link has expired")
+    #  No status reset — link stays reusable forever
     return {
         "client_name": assessment.client_name,
         "org_name": assessment.org_name,
+        "industry": assessment.industry,
         "status": assessment.status,
     }
-
 @app.post("/assessment/create")
 def create_assessment(data: AssessmentCreate, db: Session = Depends(get_db)):
     token = str(uuid.uuid4())
@@ -126,7 +134,7 @@ def create_assessment(data: AssessmentCreate, db: Session = Depends(get_db)):
         client_email=data.client_email,
         org_name=data.org_name,
         industry=data.industry,
-        expires_at=datetime.utcnow() + timedelta(days=365),
+        expires_at=datetime.utcnow() + timedelta(days=3650)
     )
     db.add(assessment)
     db.commit()
@@ -609,6 +617,95 @@ def submit_public_assessment(data: PublicSubmitAssessment, db: Session = Depends
     except Exception as e:
         print(f" Email failed: {e}")
 
+    return {
+        "message": "Assessment submitted successfully",
+        "overall_score": result["overall_score"],
+        "maturity_stage": result["maturity_stage"],
+        "risk_band": result["risk_band"],
+        "top_risks": result["top_risks"],
+        "dimension_scores": result["dimension_scores"],
+    }
+
+@app.post("/assessment/submit-employee")
+def submit_employee_assessment(data: EmployeeSubmitAssessment, db: Session = Depends(get_db)):
+    # Find the org template assessment by token
+    org_assessment = db.query(Assessment).filter(Assessment.token == data.org_token).first()
+    if not org_assessment:
+        raise HTTPException(status_code=404, detail="Assessment link not found")
+ 
+    # Create a NEW individual assessment record for this employee
+    employee_assessment = Assessment(
+        token=str(uuid.uuid4()),  # unique token for this submission
+        client_name=data.employee_name,
+        client_email=data.employee_email,
+        org_name=org_assessment.org_name,
+        industry=org_assessment.industry,
+        expires_at=datetime.utcnow() + timedelta(days=3650),
+        status="completed",
+    )
+    db.add(employee_assessment)
+    db.commit()
+    db.refresh(employee_assessment)
+ 
+    # Save responses
+    for q in QUESTIONS:
+        answer_value = data.answers.get(str(q["id"]), 3)
+        db.add(Response(
+            assessment_id=employee_assessment.id,
+            question_id=q["id"],
+            dimension=q["dimension"],
+            answer=answer_value,
+        ))
+ 
+    # Score
+    responses = [
+        {"question_id": q["id"], "dimension": q["dimension"], "answer": data.answers.get(str(q["id"]), 3)}
+        for q in QUESTIONS
+    ]
+    result = calculate_scores(responses)
+ 
+    # Generate Gemini report
+    ai_narrative = ""
+    try:
+        ai_narrative = generate_report(
+            client_name=data.employee_name,
+            org_name=org_assessment.org_name,
+            industry=org_assessment.industry or "Not specified",
+            overall_score=result["overall_score"],
+            maturity_stage=result["maturity_stage"],
+            risk_band=result["risk_band"],
+            dimension_scores=result["dimension_scores"],
+            top_risks=result["top_risks"],
+        )
+        print(f" Report generated for {data.employee_name}")
+    except Exception as e:
+        print(f" Gemini failed: {e}")
+        ai_narrative = "Report generation failed. Please contact support."
+ 
+    # Save report
+    db.add(Report(
+        assessment_id=employee_assessment.id,
+        overall_score=result["overall_score"],
+        maturity_stage=result["maturity_stage"],
+        risk_band=result["risk_band"],
+        narrative=ai_narrative,
+    ))
+    db.commit()
+ 
+    # Send emails
+    try:
+        send_report_to_all(
+            client_name=data.employee_name,
+            client_email=data.employee_email,
+            org_name=org_assessment.org_name,
+            overall_score=result["overall_score"],
+            maturity_stage=result["maturity_stage"],
+            risk_band=result["risk_band"],
+            report_text=ai_narrative,
+        )
+    except Exception as e:
+        print(f" Email failed: {e}")
+ 
     return {
         "message": "Assessment submitted successfully",
         "overall_score": result["overall_score"],

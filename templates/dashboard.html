@@ -12,52 +12,29 @@
             --white: #FFFFFF;
             --black: #1a1a1a;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--brand-beige); color: var(--black); min-height: 100vh; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--brand-beige);
-            color: var(--black);
-            min-height: 100vh;
-        }
-
-        /* Navbar */
-        .navbar {
-            background: var(--brand-orange);
-            padding: 12px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+        .navbar { background: var(--brand-orange); padding: 12px 32px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .nav-left { display: flex; align-items: center; gap: 15px; }
         .logo-img { height: 45px; background: white; padding: 5px; border-radius: 6px; }
         .navbar-brand { color: white; font-size: 20px; font-weight: 800; letter-spacing: 0.5px; line-height: 1; }
         .navbar-subtitle { color: rgba(255,255,255,0.85); font-size: 12px; font-weight: 500; margin-top: 2px; }
+        .btn-nav { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; text-decoration: none; }
+        .btn-nav:hover { background: rgba(255,255,255,0.3); }
 
-        /* Container */
         .container { max-width: 1200px; margin: 0 auto; padding: 32px 20px; }
         .top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         h2 { font-size: 26px; font-weight: 800; }
 
-        .btn-primary {
-            background: var(--brand-orange); color: white; border: none;
-            padding: 12px 24px; border-radius: 10px; font-size: 15px; font-weight: 700;
-            cursor: pointer; box-shadow: 0 4px 12px rgba(255,103,10,0.2); transition: transform 0.1s;
-        }
+        .btn-primary { background: var(--brand-orange); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(255,103,10,0.2); transition: transform 0.1s; }
         .btn-primary:hover { background: #e55a00; transform: translateY(-1px); }
 
-        /* Stats */
         .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
-        .stat-card {
-            background: white; border-radius: 12px; padding: 24px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-bottom: 4px solid var(--brand-orange);
-        }
+        .stat-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-bottom: 4px solid var(--brand-orange); }
         .stat-number { font-size: 36px; font-weight: 800; color: var(--brand-orange); }
         .stat-label { font-size: 13px; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* Table */
         .table-card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
         thead { background: #fafafa; }
@@ -75,32 +52,23 @@
         .btn-view { background: #fff0e6; color: var(--brand-orange); border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; width: 80px; }
         .btn-edit { background: #fff8e7; color: #b37400; border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; width: 80px; }
         .btn-delete { background: #ffebee; color: #c62828; border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; width: 80px; }
+        .btn-share { background: #e8f5e9; color: #2e7d32; border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; width: 80px; }
         .btn-view:hover { background: #ffd9c0; }
         .btn-edit:hover { background: #ffecb3; }
         .btn-delete:hover { background: #ffcdd2; }
+        .btn-share:hover { background: #c8e6c9; }
 
         .empty-state { text-align: center; padding: 60px 20px; color: #999; }
 
-        /* Modals */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: rgba(0,0,0,0.6);
-            z-index: 100; align-items: center; justify-content: center;
-        }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
-        .modal {
-            background: white; border-radius: 16px; padding: 32px;
-            max-width: 480px; width: 100%; margin: 20px; max-height: 90vh; overflow-y: auto;
-        }
+        .modal { background: white; border-radius: 16px; padding: 32px; max-width: 480px; width: 100%; margin: 20px; max-height: 90vh; overflow-y: auto; }
         .modal h3 { font-size: 20px; font-weight: 800; color: var(--black); margin-bottom: 6px; }
         .modal p { font-size: 14px; color: #666; margin-bottom: 20px; }
 
         .field { margin-bottom: 16px; }
         label { display: block; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 6px; }
-        input, select {
-            width: 100%; border: 2px solid #e8e8e8; border-radius: 10px;
-            padding: 10px 14px; font-size: 14px; color: #333; outline: none; font-family: inherit;
-        }
+        input, select { width: 100%; border: 2px solid #e8e8e8; border-radius: 10px; padding: 10px 14px; font-size: 14px; color: #333; outline: none; font-family: inherit; }
         input:focus, select:focus { border-color: var(--brand-orange); }
 
         .modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
@@ -108,85 +76,65 @@
         .btn-create { flex: 2; background: var(--brand-orange); color: white; border: none; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
         .btn-danger { flex: 2; background: #c62828; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
 
-        .link-result {
-            display: none; background: #fff0e6; border: 1px solid #ffbe98;
-            border-radius: 10px; padding: 16px; margin-top: 16px;
-        }
+        .link-result { display: none; background: #fff0e6; border: 1px solid #ffbe98; border-radius: 10px; padding: 16px; margin-top: 16px; }
         .link-result p { font-size: 13px; color: var(--brand-orange); font-weight: 700; margin-bottom: 8px; }
         .link-box { display: flex; gap: 8px; align-items: center; }
-        .link-text {
-            flex: 1; background: white; border: 1px solid #ddd; border-radius: 8px;
-            padding: 8px 12px; font-size: 13px; color: #333; word-break: break-all;
-        }
-        .btn-copy {
-            background: var(--brand-orange); color: white; border: none;
-            padding: 8px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; white-space: nowrap;
-        }
+        .link-text { flex: 1; background: white; border: 1px solid #ddd; border-radius: 8px; padding: 8px 12px; font-size: 13px; color: #333; word-break: break-all; }
+        .btn-copy { background: var(--brand-orange); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; white-space: nowrap; }
 
-        /* Report Modal */
-        .report-modal {
-            background: white; border-radius: 16px; max-width: 850px;
-            width: 100%; max-height: 90vh; display: flex; flex-direction: column; margin: 20px;
-        }
+        /* Share Link Modal */
+        .share-modal { background: white; border-radius: 16px; padding: 32px; max-width: 500px; width: 100%; margin: 20px; }
+        .share-modal h3 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+        .share-modal p { font-size: 14px; color: #666; margin-bottom: 20px; }
+        .share-link-box { background: #fff0e6; border: 1.5px solid #ffbe98; border-radius: 10px; padding: 16px; }
+        .share-link-box .share-label { font-size: 12px; font-weight: 700; color: var(--brand-orange); text-transform: uppercase; margin-bottom: 8px; }
+        .share-link-text { font-size: 14px; color: #333; word-break: break-all; background: white; border: 1px solid #ddd; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+        .share-instructions { font-size: 13px; color: #666; background: #f9f9f9; border-radius: 8px; padding: 12px; margin-top: 12px; line-height: 1.6; }
+
+        .report-modal { background: white; border-radius: 16px; max-width: 850px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; margin: 20px; }
         .report-header { background: var(--brand-orange); color: white; padding: 30px; border-radius: 16px 16px 0 0; }
         .report-scroll-area { padding: 30px; overflow-y: auto; }
         .report-body { font-family: Georgia, serif; font-size: 15px; line-height: 1.8; color: #2c3e50; white-space: pre-wrap; }
 
-        /* Coming Soon Modal */
-        .coming-soon-modal {
-            background: white; border-radius: 16px; padding: 40px;
-            max-width: 400px; width: 100%; margin: 20px; text-align: center;
-        }
-        .coming-soon-icon { font-size: 48px; margin-bottom: 16px; }
-        .coming-soon-modal h3 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
-        .coming-soon-modal p { color: #666; font-size: 14px; margin-bottom: 24px; }
-
-        /* Toast */
-        .toast {
-            position: fixed; bottom: 24px; right: 24px; background: #333; color: white;
-            padding: 12px 20px; border-radius: 10px; font-size: 14px; display: none; z-index: 999;
-        }
+        .toast { position: fixed; bottom: 24px; right: 24px; background: #333; color: white; padding: 12px 20px; border-radius: 10px; font-size: 14px; display: none; z-index: 999; }
         .toast.show { display: block; }
         .toast.error { background: #c62828; }
         .toast.success { background: #2e7d32; }
 
-        /* Print */
         @media print {
-            @page { size: auto; margin: 20mm; }
-            body * { visibility: hidden; background: white !important; }
-            #report-modal, #report-modal * { visibility: visible; }
-            #report-modal { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
-            .report-header { background: var(--brand-orange) !important; -webkit-print-color-adjust: exact; }
-            .report-actions { display: none !important; }
+            @page { size: auto; margin: 15mm; }
+            body > *:not(#report-modal) { display: none !important; }
+            #report-modal { display: block !important; position: static !important; background: none !important; width: 100% !important; height: auto !important; }
+            .report-modal { max-height: none !important; box-shadow: none !important; width: 100% !important; }
             .report-scroll-area { overflow: visible !important; }
+            .report-header { background: var(--brand-orange) !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .report-actions { display: none !important; }
+            .report-body { font-size: 12px !important; line-height: 1.6 !important; }
         }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
 <div class="navbar">
     <div class="nav-left">
-        <img src="https://ceravive.digitalblocs.com/wp-content/uploads/2026/05/logo-1-2.png" alt="CereViva Logo" class="logo-img">
+        <img src="https://ceravive.digitalblocs.com/wp-content/uploads/2023/06/download.svg" alt="CereViva Logo" class="logo-img" />
         <div>
             <div class="navbar-brand">CereViva</div>
             <div class="navbar-subtitle">NeuroSafety™ Assessment Platform</div>
         </div>
     </div>
-    <a href="/survey-editor?token={{ wp_token }}" class="btn-nav" style="...">⚙ Manage Survey</a>
+    <a href="/survey-editor?token={{ wp_token }}" class="btn-nav">⚙ Manage Survey</a>
 </div>
 
-<!-- Main Content -->
 <div class="container">
-    <div style="background:#fff0e6;border:1.5px solid #ffbe98;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:10px;">
-    <span style="font-size:13px;color:#666">Public Form:</span>
-    <span style="font-size:13px;font-weight:700;color:#FF670A">cereviva.com/survey</span>
-    <button onclick="copyFormLink()" style="background:#FF670A;color:white;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;">Copy Link</button>
-</div>
+    <div class="top-row">
+        <h2>Assessments</h2>
+        <button class="btn-primary" id="create-btn">+ New Organisation Link</button>
+    </div>
 
     <div class="stats-row">
         <div class="stat-card">
-            <div class="stat-label">Total Volume</div>
+            <div class="stat-label">Total Submissions</div>
             <div class="stat-number" id="stat-total">0</div>
         </div>
         <div class="stat-card">
@@ -194,7 +142,7 @@
             <div class="stat-number" id="stat-completed">0</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Pending Action</div>
+            <div class="stat-label">Pending</div>
             <div class="stat-number" id="stat-pending" style="color: var(--light-orange)">0</div>
         </div>
     </div>
@@ -203,30 +151,31 @@
         <table>
             <thead>
                 <tr>
-                    <th>Client Details</th>
+                    <th>Employee</th>
                     <th>Organisation</th>
                     <th>Status</th>
                     <th>Overall Score</th>
                     <th>Maturity</th>
-                    <th>Created Date</th>
+                    <th>Date</th>
                     <th style="text-align:right">Actions</th>
                 </tr>
             </thead>
             <tbody id="assessments-table">
-                <tr><td colspan="7" style="text-align:center;padding:50px;color:#999">Loading platform data...</td></tr>
+                <tr><td colspan="7" style="text-align:center;padding:50px;color:#999">Loading...</td></tr>
             </tbody>
         </table>
     </div>
 </div>
 
-<!-- Create Assessment Modal -->
+<!-- Create Organisation Link Modal -->
 <div class="modal-overlay" id="create-modal">
     <div class="modal">
-        <h3>Create Assessment Link</h3>
-        <p>Enter client details to generate a unique assessment link.</p>
-        <div class="field"><label>Client Name *</label><input type="text" id="client-name" placeholder="e.g. John Smith" /></div>
-        <div class="field"><label>Client Email *</label><input type="email" id="client-email" placeholder="e.g. john@company.com" /></div>
-        <div class="field"><label>Organisation Name *</label><input type="text" id="org-name" placeholder="e.g. Acme Corp" /></div>
+        <h3>New Organisation Link</h3>
+        <p>Create a reusable assessment link for this organisation. Share it with HR — employees fill in their own details when they take the assessment.</p>
+        <div class="field">
+            <label>Organisation Name *</label>
+            <input type="text" id="org-name" placeholder="e.g. Acme Corp" />
+        </div>
         <div class="field">
             <label>Industry</label>
             <select id="industry">
@@ -242,7 +191,7 @@
             </select>
         </div>
         <div class="link-result" id="link-result">
-            <p>✓ Assessment link created! Share this with your client:</p>
+            <p>✓ Reusable link created! Share with HR to distribute to all employees:</p>
             <div class="link-box">
                 <div class="link-text" id="generated-link"></div>
                 <button class="btn-copy" id="copy-btn">Copy</button>
@@ -258,12 +207,12 @@
 <!-- Edit Modal -->
 <div class="modal-overlay" id="edit-modal">
     <div class="modal">
-        <h3>Edit Assessment</h3>
-        <p>Update the client details below.</p>
+        <h3>Edit Record</h3>
+        <p>Update the details below.</p>
         <input type="hidden" id="edit-assessment-id" />
-        <div class="field"><label>Client Name</label><input type="text" id="edit-client-name" /></div>
-        <div class="field"><label>Client Email</label><input type="email" id="edit-client-email" /></div>
-        <div class="field"><label>Organisation Name</label><input type="text" id="edit-org-name" /></div>
+        <div class="field"><label>Name</label><input type="text" id="edit-client-name" /></div>
+        <div class="field"><label>Email</label><input type="email" id="edit-client-email" /></div>
+        <div class="field"><label>Organisation</label><input type="text" id="edit-org-name" /></div>
         <div class="field">
             <label>Industry</label>
             <select id="edit-industry">
@@ -288,12 +237,31 @@
 <!-- Delete Modal -->
 <div class="modal-overlay" id="delete-modal">
     <div class="modal">
-        <h3>Delete Assessment</h3>
-        <p>Are you sure you want to delete this assessment? This action cannot be undone and will remove all associated data.</p>
+        <h3>Delete Record</h3>
+        <p>Are you sure you want to delete this record? This cannot be undone.</p>
         <input type="hidden" id="delete-assessment-id" />
         <div class="modal-buttons">
             <button class="btn-cancel" id="cancel-delete-btn">Cancel</button>
             <button class="btn-danger" id="confirm-delete-btn">Delete Permanently</button>
+        </div>
+    </div>
+</div>
+
+<!-- Share Link Modal -->
+<div class="modal-overlay" id="share-modal">
+    <div class="share-modal">
+        <h3>Share Assessment Link</h3>
+        <p>Share this link with HR to distribute to all employees at this organisation.</p>
+        <div class="share-link-box">
+            <div class="share-label">Reusable Assessment Link</div>
+            <div class="share-link-text" id="share-link-text"></div>
+            <button class="btn-copy" id="share-copy-btn" style="width:100%">📋 Copy Link</button>
+        </div>
+        <div class="share-instructions">
+            ℹ️ <strong>How it works:</strong> Anyone with this link can fill in the assessment. Each employee enters their own name and email. All responses appear in this dashboard automatically.
+        </div>
+        <div class="modal-buttons" style="margin-top:16px">
+            <button class="btn-cancel" id="cancel-share-btn">Close</button>
         </div>
     </div>
 </div>
@@ -320,22 +288,12 @@
                     <div id="report-risk" style="font-size:15px;font-weight:700;color:#333">—</div>
                 </div>
             </div>
-            <div class="report-body" id="report-body">Loading report analysis...</div>
+            <div class="report-body" id="report-body">Loading report...</div>
             <div class="report-actions" style="margin-top:40px;display:flex;justify-content:flex-end;gap:10px">
                 <button class="btn-cancel" id="close-report-btn" style="background:#eee;padding:10px 20px;border-radius:8px;border:none;cursor:pointer">Close</button>
                 <button class="btn-primary" id="print-btn">🖨 Print as PDF</button>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- Coming Soon Modal -->
-<div class="modal-overlay" id="coming-soon-modal">
-    <div class="coming-soon-modal">
-        <div class="coming-soon-icon">🚧</div>
-        <h3>Coming Soon</h3>
-        <p>The Survey Editor is currently under development. You'll be able to create and edit survey forms directly from this dashboard in a future update.</p>
-        <button class="btn-primary" id="close-coming-soon-btn" style="width:100%">Got it</button>
     </div>
 </div>
 
@@ -346,11 +304,8 @@
     const wpToken = "{{ wp_token or '' }}";
     const jwtToken = localStorage.getItem("token");
 
-    if (!skipAuth && !jwtToken) {
-        window.location.href = "/login";
-    }
+    if (!skipAuth && !jwtToken) { window.location.href = "/login"; }
 
-    // ── Headers ───────────────────────────────────────────────
     function getHeaders(includeContent = false) {
         const headers = {};
         if (includeContent) headers["Content-Type"] = "application/json";
@@ -362,7 +317,6 @@
         return headers;
     }
 
-    // ── Toast ─────────────────────────────────────────────────
     function showToast(msg, type = '') {
         const t = document.getElementById("toast");
         t.textContent = msg;
@@ -385,7 +339,7 @@
             document.getElementById("stat-pending").textContent = assessments.filter(a => a.status === "pending").length;
 
             if (assessments.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No assessments yet</p><span>Click &quot;+ Create New Assessment Link&quot; to get started</span></div></td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No submissions yet</p><p style="font-size:13px;margin-top:8px">Create an organisation link and share it with HR to get started</p></div></td></tr>';
                 return;
             }
 
@@ -397,6 +351,7 @@
                 const clientEmail = a.client_email || '';
                 const orgName = a.org_name || '';
                 const industry = a.industry || '';
+                const assessmentToken = a.token || '';
 
                 row.innerHTML = `
                     <td>
@@ -411,6 +366,7 @@
                     <td style="text-align:right">
                         <div class="actions">
                             ${a.status === 'completed' ? '<button class="btn-view report-btn">Report</button>' : ''}
+                            ${a.status === 'pending' ? '<button class="btn-share share-btn">Share</button>' : ''}
                             <button class="btn-edit edit-btn">Edit</button>
                             <button class="btn-delete delete-btn">Delete</button>
                         </div>
@@ -419,6 +375,9 @@
 
                 if (a.status === 'completed') {
                     row.querySelector('.report-btn').addEventListener('click', () => viewReport(assessmentId));
+                }
+                if (a.status === 'pending') {
+                    row.querySelector('.share-btn').addEventListener('click', () => openShareModal(assessmentToken, orgName));
                 }
                 row.querySelector('.edit-btn').addEventListener('click', () => openEditModal(assessmentId, clientName, clientEmail, orgName, industry));
                 row.querySelector('.delete-btn').addEventListener('click', () => openDeleteModal(assessmentId));
@@ -432,14 +391,14 @@
         }
     }
 
-    // ── Create Modal ──────────────────────────────────────────
+    // ── Create Org Link ───────────────────────────────────────
     document.getElementById("create-btn").addEventListener("click", () => {
         document.getElementById("create-modal").classList.add("active");
         document.getElementById("link-result").style.display = "none";
         document.getElementById("btn-create").style.display = "block";
         document.getElementById("btn-create").textContent = "Generate Link →";
         document.getElementById("btn-create").disabled = false;
-        ["client-name","client-email","org-name"].forEach(id => document.getElementById(id).value = "");
+        document.getElementById("org-name").value = "";
         document.getElementById("industry").value = "";
     });
 
@@ -449,13 +408,11 @@
     });
 
     document.getElementById("btn-create").addEventListener("click", async () => {
-        const clientName = document.getElementById("client-name").value.trim();
-        const clientEmail = document.getElementById("client-email").value.trim();
         const orgName = document.getElementById("org-name").value.trim();
         const industry = document.getElementById("industry").value;
 
-        if (!clientName || !clientEmail || !orgName) {
-            alert("Please fill in all required fields.");
+        if (!orgName) {
+            alert("Please enter the organisation name.");
             return;
         }
 
@@ -467,7 +424,12 @@
             const res = await fetch("/assessment/create", {
                 method: "POST",
                 headers: getHeaders(true),
-                body: JSON.stringify({ client_name: clientName, client_email: clientEmail, org_name: orgName, industry })
+                body: JSON.stringify({
+                    client_name: orgName,
+                    client_email: "hr@organisation.com",
+                    org_name: orgName,
+                    industry: industry
+                })
             });
 
             if (!res.ok) {
@@ -492,12 +454,10 @@
     });
 
     // ── Copy Link ─────────────────────────────────────────────
-    document.getElementById("copy-btn").addEventListener("click", () => {
-        const link = document.getElementById("generated-link").textContent;
-        const btn = document.getElementById("copy-btn");
+    function copyToClipboard(text, btn, label = "Copy") {
         try {
             const el = document.createElement("textarea");
-            el.value = link;
+            el.value = text;
             el.style.position = "fixed";
             el.style.opacity = "0";
             document.body.appendChild(el);
@@ -505,11 +465,33 @@
             el.select();
             document.execCommand("copy");
             document.body.removeChild(el);
-            btn.textContent = "Copied!";
-            setTimeout(() => btn.textContent = "Copy", 2000);
+            btn.textContent = "Copied! ✓";
+            setTimeout(() => btn.textContent = label, 2000);
+            showToast("Link copied to clipboard ✅", "success");
         } catch(e) {
-            window.prompt("Copy this link (Ctrl+C):", link);
+            window.prompt("Copy this link (Ctrl+C):", text);
         }
+    }
+
+    document.getElementById("copy-btn").addEventListener("click", () => {
+        const link = document.getElementById("generated-link").textContent;
+        copyToClipboard(link, document.getElementById("copy-btn"), "Copy");
+    });
+
+    // ── Share Modal ───────────────────────────────────────────
+    function openShareModal(token, orgName) {
+        const link = window.location.origin + "/assess/" + token;
+        document.getElementById("share-link-text").textContent = link;
+        document.getElementById("share-modal").classList.add("active");
+    }
+
+    document.getElementById("share-copy-btn").addEventListener("click", () => {
+        const link = document.getElementById("share-link-text").textContent;
+        copyToClipboard(link, document.getElementById("share-copy-btn"), "📋 Copy Link");
+    });
+
+    document.getElementById("cancel-share-btn").addEventListener("click", () => {
+        document.getElementById("share-modal").classList.remove("active");
     });
 
     // ── Edit Modal ────────────────────────────────────────────
@@ -539,11 +521,11 @@
             })
         });
         if (res.ok) {
-            showToast("Assessment updated successfully ✅", "success");
+            showToast("Record updated ✅", "success");
             document.getElementById("edit-modal").classList.remove("active");
             loadAssessments();
         } else {
-            showToast("Failed to update assessment", "error");
+            showToast("Failed to update", "error");
         }
     });
 
@@ -564,18 +546,18 @@
             headers: getHeaders()
         });
         if (res.ok) {
-            showToast("Assessment deleted ✅", "success");
+            showToast("Record deleted ✅", "success");
             document.getElementById("delete-modal").classList.remove("active");
             loadAssessments();
         } else {
-            showToast("Failed to delete assessment", "error");
+            showToast("Failed to delete", "error");
         }
     });
 
     // ── Report Modal ──────────────────────────────────────────
     async function viewReport(id) {
         document.getElementById("report-modal").classList.add("active");
-        document.getElementById("report-body").textContent = "Loading report analysis...";
+        document.getElementById("report-body").textContent = "Loading report...";
 
         const res = await fetch(`/dashboard/report/${id}`, { headers: getHeaders() });
         if (!res.ok) {
@@ -598,26 +580,10 @@
 
     document.getElementById("print-btn").addEventListener("click", () => window.print());
 
-    // ── Coming Soon Modal ─────────────────────────────────────
-    document.getElementById("close-coming-soon-btn").addEventListener("click", () => {
-        document.getElementById("coming-soon-modal").classList.remove("active");
-    });
-
     // ── Logout ────────────────────────────────────────────────
     function logout() {
         localStorage.removeItem("token");
         window.location.href = "/login";
-    }
-
-    // ── Init ──────────────────────────────────────────────────
-    function copyFormLink() {
-        const el = document.createElement("textarea");
-        el.value = "https://cereviva.com/survey";
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand("copy");
-        document.body.removeChild(el);
-        showToast("Link copied! ✅", "success");
     }
 
     loadAssessments();
