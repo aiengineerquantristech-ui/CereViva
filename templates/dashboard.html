@@ -178,10 +178,11 @@
 
 <!-- Main Content -->
 <div class="container">
-    <div class="top-row">
-        <h2>Active Assessments</h2>
-        <button class="btn-primary" id="create-btn">+ Create New Assessment Link</button>
-    </div>
+    <div style="background:#fff0e6;border:1.5px solid #ffbe98;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:10px;">
+    <span style="font-size:13px;color:#666">Public Form:</span>
+    <span style="font-size:13px;font-weight:700;color:#FF670A">cereviva.com/survey</span>
+    <button onclick="copyFormLink()" style="background:#FF670A;color:white;border:none;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;">Copy Link</button>
+</div>
 
     <div class="stats-row">
         <div class="stat-card">
@@ -609,6 +610,16 @@
     }
 
     // ── Init ──────────────────────────────────────────────────
+    function copyFormLink() {
+        const el = document.createElement("textarea");
+        el.value = "https://cereviva.com/survey";
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand("copy");
+        document.body.removeChild(el);
+        showToast("Link copied! ✅", "success");
+    }
+
     loadAssessments();
 </script>
 </body>

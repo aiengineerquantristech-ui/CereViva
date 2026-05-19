@@ -74,6 +74,15 @@ class LoginData(BaseModel):
 
 class QuestionsReorder(BaseModel):
     question_ids: list
+
+class PublicSubmitAssessment(BaseModel):
+    client_name: str
+    client_email: str
+    org_name: str
+    industry: Optional[str] = None
+    demographics: dict
+    answers: dict
+    open_text: dict
 # ── Public Routes ─────────────────────────────────────────────
 
 @app.get("/")
@@ -532,3 +541,79 @@ class SurveyQuestionUpdate(BaseModel):
 
 class QuestionsReorder(BaseModel):
     question_ids: list
+
+@app.get("/survey")
+def public_survey_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={}
+    )
+
+@app.post("/assessment/submit-public")
+def submit_public_assessment(data: PublicSubmitAssessment, db: Session = Depends(get_db)):
+    assessment = Assessment(
+        token=str(uuid.uuid4()),
+        client_name=data.client_name,
+        client_email=data.client_email,
+        org_name=data.org_name,
+        industry=data.industry,
+        expires_at=datetime.utcnow() + timedelta(days=3650),
+        status="completed",
+    )
+    db.add(assessment)
+    db.commit()
+    db.refresh(assessment)
+
+    for q in QUESTIONS:
+        answer_value = data.answers.get(str(q["id"]), 3)
+        db.add(Response(
+            assessment_id=assessment.id,
+            question_id=q["id"],
+            dimension=q["dimension"],
+            answer=answer_value,
+        ))
+
+    responses = [{"question_id": q["id"], "dimension": q["dimension"], "answer": data.answers.get(str(q["id"]), 3)} for q in QUESTIONS]
+    result = calculate_scores(responses)
+
+    ai_narrative = ""
+    try:
+        ai_narrative = generate_report(
+            client_name=data.client_name, org_name=data.org_name,
+            industry=data.industry or "Not specified",
+            overall_score=result["overall_score"], maturity_stage=result["maturity_stage"],
+            risk_band=result["risk_band"], dimension_scores=result["dimension_scores"],
+            top_risks=result["top_risks"],
+        )
+    except Exception as e:
+        print(f"Gemini failed: {e}")
+        ai_narrative = "Report generation failed. Please contact support."
+
+    db.add(Report(
+        assessment_id=assessment.id,
+        overall_score=result["overall_score"],
+        maturity_stage=result["maturity_stage"],
+        risk_band=result["risk_band"],
+        narrative=ai_narrative,
+    ))
+    db.commit()
+
+    try:
+        send_report_to_all(
+            client_name=data.client_name, client_email=data.client_email,
+            org_name=data.org_name, overall_score=result["overall_score"],
+            maturity_stage=result["maturity_stage"], risk_band=result["risk_band"],
+            report_text=ai_narrative,
+        )
+    except Exception as e:
+        print(f" Email failed: {e}")
+
+    return {
+        "message": "Assessment submitted successfully",
+        "overall_score": result["overall_score"],
+        "maturity_stage": result["maturity_stage"],
+        "risk_band": result["risk_band"],
+        "top_risks": result["top_risks"],
+        "dimension_scores": result["dimension_scores"],
+    }
