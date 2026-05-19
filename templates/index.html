@@ -292,7 +292,7 @@
             const aRes = await fetch("/assessment/" + token);
             if (aRes.ok) {
                 assessmentData = await aRes.json();
-                document.getElementById("org-title").textContent = assessmentData.org_name + " — NeuroSafety Assessment";
+                document.getElementById("org-title").textContent = "NeuroSafety™ Assessment";
                 document.getElementById("org-name-display").textContent = assessmentData.org_name;
                 document.getElementById("org-badge").style.display = "inline-flex";
             }
