@@ -441,11 +441,20 @@ def add_question(
     if not form:
         raise HTTPException(status_code=404, detail="Form not found")
     max_order = db.query(SurveyQuestion).filter(SurveyQuestion.form_id == form_id).count()
+
+    q_text = data.question_text or data.text
+    q_type = data.question_type or data.type or "scale"
+
+    if not q_text:
+        raise HTTPException(status_code=422, detail="question_text is required")
     question = SurveyQuestion(
-        form_id=form_id, question_text=data.question_text,
-        dimension=data.dimension, question_type=data.question_type,
-        order_index=max_order, is_active=True
-    )
+    form_id=form_id,
+    question_text=q_text,
+    dimension=data.dimension,
+    question_type=q_type,
+    order_index=max_order,
+    is_active=True,
+)
     db.add(question)
     db.commit()
     db.refresh(question)
@@ -507,9 +516,11 @@ class SurveyFormUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 class SurveyQuestionCreate(BaseModel):
-    question_text: str
+    question_text: Optional[str] = None
+    text: Optional[str] = None
     dimension: str
-    question_type: str = "scale"
+    question_type: Optional[str] = None
+    type: Optional[str] = None
     order_index: int = 0
 
 class SurveyQuestionUpdate(BaseModel):
