@@ -27,8 +27,11 @@ class QuestionsReorder(BaseModel):
 
 
 class SurveyQuestionCreate(BaseModel):
-    text: str
-    type: str  # Options: 'text', 'multiple_choice', 'checkbox', 'scale'
-    dimension: Optional[str] = "General"
-    options: Optional[List[str]] = []  # For Multiple Choice/Checkboxes
+    question_text: Optional[str] = None
+    text: Optional[str] = None
+    dimension: str = "General"
+    question_type: Optional[str] = None
+    type: Optional[str] = None
+    order_index: int = 0
+    options: Optional[List[str]] = []
     is_required: bool = True

@@ -515,13 +515,7 @@ class SurveyFormUpdate(BaseModel):
     description: Optional[str] = None
     is_active: Optional[bool] = None
 
-class SurveyQuestionCreate(BaseModel):
-    question_text: Optional[str] = None
-    text: Optional[str] = None
-    dimension: str
-    question_type: Optional[str] = None
-    type: Optional[str] = None
-    order_index: int = 0
+
 
 class SurveyQuestionUpdate(BaseModel):
     question_text: Optional[str] = None
